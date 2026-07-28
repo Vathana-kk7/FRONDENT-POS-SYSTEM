@@ -1,65 +1,42 @@
 import { createBrowserRouter } from "react-router-dom";
-
-import AuthLayout from "@/layouts/AuthLayout";
-import DashboardLayout from "@/layouts/DashboardLayout";
-
-import Login from "@/features/auth/pages/Login";
-import Register from "@/features/auth/pages/Register";
-import ForgotPassword from "@/features/auth/pages/ForgotPassword";
-import Profile from "@/features/auth/pages/Profile";
-
-import Dashboard from "@/features/dashboard/pages/Dashboard";
-
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 
-const router = createBrowserRouter([
-    // Public Routes
-    {
-        element: (
-            <PublicRoute>
-                <AuthLayout />
-            </PublicRoute>
-        ),
-        children: [
-            {
-                path: "/login",
-                element: <Login />,
-            },
-            {
-                path: "/register",
-                element: <Register />,
-            },
-            {
-                path: "/forgot-password",
-                element: <ForgotPassword />,
-            },
-        ],
-    },
+import AuthLayout from "../layouts/AuthLayout";
+import DashboardLayout from "../layouts/DashboardLayout";
 
-    // Protected Routes
-    {
-        element: (
-            <PrivateRoute>
-                <DashboardLayout />
-            </PrivateRoute>
-        ),
-        children: [
-            {
-                path: "/dashboard",
-                element: <Dashboard />,
-            },
-            {
-                path: "/profile",
-                element: <Profile />,
-            },
-        ],
-    },
+import LoginPage from "../features/auth/pages/Login";
+import RegisterPage from "../features/auth/pages/Register";
+import DashboardPage from "../features/dashboard/pages/Dashboard";
+import GoogleCallback from "../features/auth/pages/GoogleCallback";
 
-    {
-        path: "*",
-        element: <h1>404 Not Found</h1>,
-    },
+export const router = createBrowserRouter([
+  // 1. Public Routes ប្រើប្រាស់ AuthLayout
+  {
+    element: (
+      <PublicRoute>
+        <AuthLayout />
+      </PublicRoute>
+    ),
+    children: [
+      { path: "/", element: <LoginPage /> },
+      { path: "/login", element: <LoginPage /> },
+      { path: "/register", element: <RegisterPage /> },      
+      // Google callback
+      { path: "/auth/callback", element: <GoogleCallback /> },
+
+    ],
+  },
+
+  // 2. Private Routes ប្រើប្រាស់ DashboardLayout និង PrivateRoute
+  {
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
+    children: [
+      { path: "/dashboard", element: <DashboardPage /> },
+    ],
+  },
 ]);
-
-export default router;

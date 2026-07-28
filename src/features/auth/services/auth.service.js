@@ -1,23 +1,27 @@
-import { publicApi, privateApi } from "@/services/api";
+import { publicApi, privateApi } from "../../../services/api";
 
 const AuthService = {
+    async login(data) {
+        // 1. យក CSRF Cookie
+        await axios.get("http://localhost:8000/sanctum/csrf-cookie", {
+        withCredentials: true,
+        });
 
-    login(data) {
-        return publicApi.post("/login", data);
+        // 2. Login
+        const response = await publicApi.post("/login", data);
+
+        return response.data;
     },
 
-    register(data) {
-        return publicApi.post("/register", data);
+    async register(data) {
+        const response = await publicApi.post("/register", data);
+        return response.data;
     },
 
-    logout() {
-        return privateApi.post("/logout");
+    async logout() {
+        const response = await privateApi.post("/logout");
+        return response.data;
     },
-
-    me() {
-        return privateApi.get("/me");
-    },
-
 };
 
 export default AuthService;

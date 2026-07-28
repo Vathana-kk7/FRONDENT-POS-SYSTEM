@@ -1,21 +1,17 @@
 import axios from "axios";
 
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+
+// សម្រាប់ Private Route ដែលត្រូវការ Token (Logout, Me, Products, ...)
 const privateApi = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-    },
+  baseURL: BASE_URL,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  },
+   // Allow browser send HttpOnly Cookie
+  withCredentials: true,
 });
 
-privateApi.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-});
 
 export default privateApi;

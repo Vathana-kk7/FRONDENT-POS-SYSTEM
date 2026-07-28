@@ -1,11 +1,17 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import useAuth from "../features/auth/hooks/useAuth";
 
 export default function PrivateRoute({ children }) {
-    const token = localStorage.getItem("token");
+  const { user, loading } = useAuth();
 
-    if (!token) {
-        return <Navigate to="/login" replace />;
-    }
+  if (loading) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
 
-    return children;
+  // ប្រសិនបើគ្មាន user (Cookie Expire ឬមិនទាន់ Login) ឱ្យទៅ /login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children ? children : <Outlet />;
 }

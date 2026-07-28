@@ -1,62 +1,76 @@
 import { useState } from "react";
-import AuthService from "../services/auth.service";
+import { loginSchema } from "../schemas/login.schema";
+import { registerSchema } from "../schemas/register.schema";
+import { useAuthContext } from "../../../context/AuthContext";
 
 export default function useAuth() {
+  const { user, loading: authLoading, loginContext, logoutContext } = useAuthContext();
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
 
-    const [loading, setLoading] = useState(false);
+  const validate = (type, formData) => {
+    const schema = type === "login" ? loginSchema : registerSchema;
+    const result = schema.safeParse(formData);
 
-    const login = async (data) => {
+    if (!result.success) {
+      const newErrors = {};
+      result.error.issues.forEach((issue) => {
+        newErrors[issue.path[0]] = issue.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
+    setErrors({});
+    return true;
+  };
 
-        try {
+  const login = async (formData) => {
+    setErrors({});
+    setApiError("");
 
-            setLoading(true);
+    const isValid = validate("login", formData);
+    if (!isValid) return false;
 
-            const response = await AuthService.login(data);
+    try {
+      setLoading(true);
+      const res = await loginContext(formData);
 
-            localStorage.setItem("token", response.data.token);
+      if (res.status === "success" || res.data || res.user) {
+        return true; // 🔑 ត្រឡប់ true ដើម្បី navigate ទៅ Dashboard
+      }
+      return false;
+    } catch (error) {
+      setApiError(error.response?.data?.message || "មានបញ្ហាក្នុងការ Log in");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            return response.data;
+  const clearFieldError = (fieldName) => {
+    if (errors[fieldName]) {
+      setErrors((prev) => ({ ...prev, [fieldName]: "" }));
+    }
+  };
 
-        } finally {
+  const logout = async () => {
+    await logoutContext();
+  };
 
-            setLoading(false);
+  const handlegooglelogin = (e) => {
+    if (e) e.preventDefault();
+    window.location.href = "http://localhost:8000/api/auth/google";
+  };
 
-        }
-
-    };
-
-    const register = async (data) => {
-
-        try {
-
-            setLoading(true);
-
-            const response = await AuthService.register(data);
-
-            return response.data;
-
-        } finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    const logout = async () => {
-
-        await AuthService.logout();
-
-        localStorage.removeItem("token");
-
-    };
-
-    return {
-
-        login,
-        register,
-        logout,
-        loading,
-
-    };
+  return {
+    user,
+    login,
+    logout,
+    loading: loading || authLoading,
+    errors,
+    apiError,
+    clearFieldError,
+    handlegooglelogin,
+  };
 }
