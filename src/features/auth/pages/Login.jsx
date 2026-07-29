@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { loginSchema } from "../schemas/login.schema";
 import { ShieldCheck, SlidersHorizontal } from "lucide-react";
 
 export default function Login() {
@@ -28,7 +29,7 @@ export default function Login() {
     
     // បើ Login ជោគជ័យ ទើប Navigate ទៅ Dashboard
     if (isSuccess) {
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     }
   };
 

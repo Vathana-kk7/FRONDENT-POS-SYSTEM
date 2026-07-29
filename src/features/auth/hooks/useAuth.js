@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useAuthContext } from "../../../context/AuthContext";
+import AuthService from "../services/auth.service";
 import { loginSchema } from "../schemas/login.schema";
 import { registerSchema } from "../schemas/register.schema";
-import { useAuthContext } from "../../../context/AuthContext";
-
 export default function useAuth() {
   const { user, loading: authLoading, loginContext, logoutContext } = useAuthContext();
   const [loading, setLoading] = useState(false);
@@ -36,12 +36,12 @@ export default function useAuth() {
       setLoading(true);
       const res = await loginContext(formData);
 
-      if (res.status === "success" || res.data || res.user) {
-        return true; // 🔑 ត្រឡប់ true ដើម្បី navigate ទៅ Dashboard
+      if (res?.success) {
+        return true;
       }
       return false;
     } catch (error) {
-      setApiError(error.response?.data?.message || "មានបញ្ហាក្នុងការ Log in");
+      setApiError(error.response?.data?.message || error.message || "មានបញ្ហាក្នុងការ Log in");
       return false;
     } finally {
       setLoading(false);
@@ -51,6 +51,25 @@ export default function useAuth() {
   const clearFieldError = (fieldName) => {
     if (errors[fieldName]) {
       setErrors((prev) => ({ ...prev, [fieldName]: "" }));
+    }
+  };
+
+  const register = async (formData) => {
+    setErrors({});
+    setApiError("");
+
+    const isValid = validate("register", formData);
+    if (!isValid) return false;
+
+    try {
+      setLoading(true);
+      await AuthService.register(formData);
+      return true;
+    } catch (error) {
+      setApiError(error.response?.data?.message || error.message || "Registration failed");
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,6 +85,7 @@ export default function useAuth() {
   return {
     user,
     login,
+    register,
     logout,
     loading: loading || authLoading,
     errors,

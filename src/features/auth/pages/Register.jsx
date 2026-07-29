@@ -28,7 +28,7 @@ export default function Register() {
         navigate("/login");
       }
     } catch (error) {
-      console.log(error.response.formData);
+      console.log(error?.response?.data || error?.message || error);
     }
   };
   

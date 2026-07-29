@@ -7,14 +7,23 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 1. Check if session cookie is active on app load
+  const refreshUser = async () => {
+    try {
+      const userData = await AuthService.getUser();
+      const normalizedUser = userData?.data ?? userData?.user ?? userData;
+      setUser(normalizedUser ?? null);
+      return normalizedUser ?? null;
+    } catch (error) {
+      setUser(null);
+      return null;
+    }
+  };
+
   useEffect(() => {
     const checkAuthStatus = async () => {
+      setLoading(true);
       try {
-        const response = await AuthService.me();
-        setUser(response.data || response);
-      } catch (error) {
-        setUser(null); // Cookie is expired or missing
+        await refreshUser();
       } finally {
         setLoading(false);
       }
@@ -23,22 +32,17 @@ export function AuthProvider({ children }) {
     checkAuthStatus();
   }, []);
 
-  // 2. Handle Login & store user state
   const loginContext = async (formData) => {
-    const res = await AuthService.login(formData);
-
-    if (res.status === "success" || res.data || res.user) {
-      try {
-        const userRes = await AuthService.me();
-        setUser(userRes.data || userRes);
-      } catch {
-        setUser(res.user || res.data || true);
-      }
+    try {
+      await AuthService.login(formData);
+      const userData = await refreshUser();
+      return { success: Boolean(userData), user: userData };
+    } catch (error) {
+      setUser(null);
+      throw error;
     }
-    return res;
   };
 
-  // 3. Handle Logout & clear user state
   const logoutContext = async () => {
     try {
       await AuthService.logout();
@@ -62,7 +66,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Export custom hook for easy access across components
 export const useAuthContext = () => useContext(AuthContext);
 
 export default AuthContext;
