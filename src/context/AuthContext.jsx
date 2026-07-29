@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import AuthService from '../features/auth/services/auth.service';
 
 const AuthContext = createContext();
+let authStatusChecked = false;
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -20,6 +21,14 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
+    const publicPaths = ["/", "/login", "/register"];
+    const currentPath = window.location.pathname;
+
+    if (publicPaths.includes(currentPath)) {
+      setLoading(false);
+      return;
+    }
+
     const checkAuthStatus = async () => {
       setLoading(true);
       try {
@@ -29,7 +38,12 @@ export function AuthProvider({ children }) {
       }
     };
 
-    checkAuthStatus();
+    if (!authStatusChecked) {
+      authStatusChecked = true;
+      checkAuthStatus();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const loginContext = async (formData) => {

@@ -9,19 +9,31 @@ export default function GoogleCallback() {
 
   useEffect(() => {
     const handleGoogleAuth = async () => {
-      try {
-        // 1. ហៅ /api/user ដើម្បីទាញយក Data របស់ User ដែលទើប Login តាម Google
+      const fetchUser = async () => {
         const userData = await AuthService.getUser();
-        const normalizedUser = userData?.data ?? userData?.user ?? userData;
+        return userData?.data ?? userData?.user ?? userData;
+      };
+
+      try {
+        console.log("GoogleCallback path:", window.location.pathname);
+
+        let normalizedUser = await fetchUser();
+        let attempts = 1;
+
+        while (!normalizedUser && attempts < 6) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          normalizedUser = await fetchUser();
+          attempts += 1;
+        }
 
         if (normalizedUser) {
-          // 2. Set user ចូលទៅក្នុង Context
           setUser(normalizedUser);
-          // 3. ជោគជ័យ -> រត់ទៅ Dashboard
-          navigate("/dashboard", { replace: true });
-        } else {
-          navigate("/login", { replace: true });
+          window.location.replace("/dashboard");
+          return;
         }
+
+        console.warn("Google login did not return an authenticated user after callback.");
+        navigate("/login", { replace: true });
       } catch (error) {
         console.error("Google Auth Error:", error);
         navigate("/login", { replace: true });

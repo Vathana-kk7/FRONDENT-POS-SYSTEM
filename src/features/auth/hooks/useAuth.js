@@ -77,9 +77,10 @@ export default function useAuth() {
     await logoutContext();
   };
 
-  const handlegooglelogin = (e) => {
+  const handlegooglelogin = async (e) => {
     if (e) e.preventDefault();
-    window.location.href = "http://localhost:8000/api/auth/google";
+    await AuthService.prepareGoogleAuth();
+    window.location.href = "/api/auth/google";
   };
 
   return {

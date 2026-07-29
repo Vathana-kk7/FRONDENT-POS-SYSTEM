@@ -17,10 +17,21 @@ const AuthService = {
         return response.data;
     },
 
+    async prepareGoogleAuth() {
+        await authApi.get("/sanctum/csrf-cookie");
+    },
+
     // 🔑 ប្រើ Endpoint ស្រាប់របស់ Sanctum
     async getUser() {
-        const response = await privateApi.get("/user");
-        return response.data;
+        try {
+            const response = await privateApi.get("/user");
+            return response.data;
+        } catch (error) {
+            if (error?.response?.status === 401) {
+                return null;
+            }
+            throw error;
+        }
     },
 
     async register(data) {

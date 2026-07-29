@@ -9,6 +9,8 @@ import LoginPage from "../features/auth/pages/Login";
 import RegisterPage from "../features/auth/pages/Register";
 import DashboardPage from "../features/dashboard/pages/Dashboard";
 import GoogleCallback from "../features/auth/pages/GoogleCallback";
+import Product from "../features/product/pages/product";
+import Category from "../features/category/pages/category";
 
 export const router = createBrowserRouter([
   // 1. Public Routes ប្រើប្រាស់ AuthLayout
@@ -24,6 +26,7 @@ export const router = createBrowserRouter([
       { path: "/register", element: <RegisterPage /> },      
       // Google callback
       { path: "/auth/callback", element: <GoogleCallback /> },
+      { path: "/auth/:provider/callback", element: <GoogleCallback /> },
 
     ],
   },
@@ -37,6 +40,8 @@ export const router = createBrowserRouter([
     ),
     children: [
       { path: "/dashboard", element: <DashboardPage /> },
+      {path : "/product", element: <Product/> },
+      {path : "/category", element : <Category /> },
     ],
   },
 ]);
