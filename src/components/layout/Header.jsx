@@ -2,6 +2,12 @@
 import { useState } from "react";
 import { Search, Mail, Bell, ChevronDown } from "lucide-react";
 import useAuth from "../../features/auth/hooks/useAuth";
+import {
+  User,
+  Settings,
+  LogOut,
+  ChevronRight,
+} from "lucide-react";
 
 export default function Header() {
   const { user } = useAuth();
@@ -61,7 +67,7 @@ export default function Header() {
             className="flex items-center gap-2"
           >
             <img
-              src="/src/assets/Images/"
+              src="/src/assets/Images/vathana.jpg"
               alt="avatar"
               className="w-9 h-9 rounded-full object-cover"
             />
@@ -78,11 +84,43 @@ export default function Header() {
 
           {/* Dropdown */}
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50">
-              <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50">
+            <div
+              className="
+                absolute right-0 top-14 w-72
+                overflow-hidden
+                rounded-[20px]
+                border border-white/30
+                backdrop-blur-[40px]
+                bg-[rgba(242,242,247,0.72)]
+                shadow-[0_10px_35px_rgba(0,0,0,0.15)]
+                ring-1 ring-white/20
+                z-50
+              "
+              style={{
+                WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                backdropFilter: "blur(40px) saturate(180%)",
+              }}
+            >
+              <div className="px-5 py-4 border-b border-black/5">
+                <h3 className="font-semibold text-[15px] text-[#1d1d1f]">
+                  {user?.name}
+                </h3>
+                <p className="text-sm text-[#6e6e73]">
+                  {user?.email}
+                </p>
+              </div>
+
+              <button className="w-full px-5 py-3 text-left text-[#1d1d1f] hover:bg-white/40 transition">
                 Profile
               </button>
-              <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 text-red-600">
+
+              <button className="w-full px-5 py-3 text-left text-[#1d1d1f] hover:bg-white/40 transition">
+                Settings
+              </button>
+
+              <div className="mx-4 border-t border-black/5" />
+
+              <button className="w-full px-5 py-3 text-left text-[#ff3b30] hover:bg-red-50 transition">
                 Logout
               </button>
             </div>
