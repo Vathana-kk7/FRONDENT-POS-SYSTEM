@@ -16,6 +16,9 @@ import { ProductsCards } from "../data/ProductCate";
 import { useProductLayout } from "../../../context/ProductLayoutContext";
 import { Download, Plus } from "lucide-react";
 import ModelProduct from "../components/ModelProduct";
+import ProductFilter from "../components/ProductFilter";
+import ProductTable from "../components/ProductTable";
+import ProductPagination from "../components/ProductPagination";
 
 function Product() {
   const { dragEnabled } = useProductLayout();
@@ -49,14 +52,14 @@ function Product() {
         <h1 className="text-xl font-medium">
           Products
         </h1>
-        <div className="flex gap-x-3">
-          <div onClick={()=>setIsopen(!isOpen)} className="bg-blue-800 shadow-lg text-white px-5 py-1 rounded-xl flex cursor-pointer justify-center items-center">
+        <div className="flex gap-3">
+          <button onClick={()=>setIsopen(!isOpen)} className="bg-blue-800 shadow-lg text-white w-40 h-11 rounded-xl flex cursor-pointer justify-center items-center">
             <div><Plus /></div>
             <div className="ms-2">
               <h1>Add Product</h1>
             </div>
-          </div>
-          <div className="bg-white flex text-black p-3 rounded-xl shadow-lg border border-gray-200 cursor-pointer">
+          </button>
+          <div className="bg-white flex justify-center items-center text-black w-40 h-11 rounded-xl shadow-lg border border-gray-200 cursor-pointer">
             <div><Download color="black" /></div>
             <div className="ms-2">Import</div>
           </div>
@@ -82,10 +85,20 @@ function Product() {
           </div>
         </SortableContext>
       </DndContext>
+      {/* Search */}
+      <div className="w-full h-full bg-white shadow-lg">
+          <ProductFilter/>
+          <ProductTable/>
+            <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
+              <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
+              <ProductPagination />
+            </div>
+      </div>
     </div>
+
     {isOpen && (
       <ModelProduct onClose={() => setIsopen(false)} />
-    )}ខ
+    )}
   </>
   );
 }
