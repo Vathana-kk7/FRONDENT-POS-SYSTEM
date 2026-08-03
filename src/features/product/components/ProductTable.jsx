@@ -1,194 +1,216 @@
 import { Delete, Edit, Eye, NotebookPen, Trash2 } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
+import { products } from '../data/ProductCate'; 
+import {useProduct } from '../../../context/ProductContext';
+// import { useModal } from '../../../context/ModalContext';
 function ProductTable() {
+ const {
+  openView,
+  openEdit,
+  openDelete,
+} = useProduct();
   return (
     <div className=''>
-      {/* Header */}
-      <div className='flex gap-10 border border-gray-200 bg-gray-100 p-3'> 
-        <h1 className='pr-80 font-medium'>Prouduct</h1>
-        <div className='flex gap-20 font-medium'>
-          <h1 className=''>Category</h1>
-          <h1 className='ms-10'>SKU</h1>
-          <h1 className='ms-10'>Price</h1>
-          <h1 className='ms-10'>Stock</h1>
-          <h1 className='ms-10'>Status</h1>
-        </div>
-        <h1 className='pl-40 font-medium'>Action</h1>
+       {/* ================= HEADER ================= */}
+      <div
+        className="
+          grid
+          grid-cols-[minmax(380px,1fr)_140px_150px_120px_100px_130px_170px]
+          items-center
+          gap-4
+          h-[50px]
+          px-4
+          bg-gray-100
+          border
+          border-gray-200
+          text-gray-900
+          font-medium
+        "
+      >
+        <div>Product</div>
+        <div>Category</div>
+        <div>SKU</div>
+        <div>Price</div>
+        <div>Stock</div>
+        <div>Status</div>
+        <div>Action</div>
       </div>
       {/* scroll */}
-      <div className='max-h-[450px] overflow-y-auto scrollbar-none'>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
-      </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
-      </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
+     <div className="max-h-[450px] overflow-y-auto scrollbar-none">
+  {products.map((product) => (
+    <div
+      key={product.id}
+      className="
+        grid
+        grid-cols-[minmax(380px,1fr)_140px_150px_120px_100px_130px_170px]
+        items-center
+        gap-4
+        min-h-[80px]
+        px-6
+        
+        bg-gray-50
+        border-b
+        border-gray-200
+        hover:bg-gray-200
+        hover:scale-101
+        transition-all
+      "
+    >
+      {/* Product */}
+      <div className="flex items-center gap-5 min-w-0">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="
+            w-[65px]
+            h-[55px]
+            object-cover
+            rounded-md
+            shrink-0
+          "
+        />
+
+        <div className="min-w-0">
+          <h1 className="font-semibold text-gray-900 truncate">
+            {product.name}
+          </h1>
+
+          <p className="text-sm text-gray-500 truncate">
+            {product.description}
+          </p>
         </div>
       </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
+
+      {/* Category */}
+      <div>
+        <span
+          className="
+            inline-flex
+            items-center
+            bg-blue-100
+            px-3
+            py-1
+            rounded-md
+            text-sm
+            font-semibold
+            text-blue-800
+          "
+        >
+          Laptop
+        </span>
       </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
+
+      {/* SKU */}
+      <div className="text-gray-600 font-semibold">
+        LAP-HP-001
       </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
+
+      {/* Price */}
+      <div className="text-gray-600 font-semibold">
+        $650.00
       </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
+
+      {/* Stock */}
+      <div className="text-green-600 font-semibold">
+        25
       </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
+
+      {/* Status */}
+      <div>
+        <span
+          className="
+            inline-flex
+            items-center
+            bg-green-100
+            px-3
+            py-1
+            rounded-md
+            text-sm
+            font-semibold
+            text-green-800
+          "
+        >
+          In Stock
+        </span>
       </div>
-        <div className='flex  items-center bg-gray-50  border-b-1 border-gray-400 hover:bg-gray-200 hover:scale-x-101 transition-all'>
-        <div className='ms-3'>
-          <img src="/src/assets/Images/com.png" className='object-cover w-19 h-19'  alt="" />
-        </div>
-        <div className='ms-5'>
-            <h1>HP Pavilion 15</h1>
-            <p>Today I love you Nisa I miss you</p>
-        </div>
-        <div className='ms-25 bg-blue-100 px-3 py-1 rounded-sm text-sm font-semibold text-blue-800'>Labtop</div>
-        <div className='ms-29 text-gray-600 font-semibold'>LAP-HP-001</div>
-        <div className='ms-19 text-gray-600 font-semibold'>$650.00</div>
-        <div className='ms-29 text-green-600 font-semibold'>25</div>
-        <div className='ms-31 bg-green-100 px-3 py-1 rounded-sm text-sm font-semibold text-green-800'>In Stock</div>
-        <div className='flex gap-3 ms-45'>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Eye color="blue" size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Edit className='text-yellow-500' size={18}/></div>
-          <div className='border border-gray-300 rounded-lg px-2 py-1.5 cursor-pointer'><Trash2 color="red " size={18}/></div>
-        </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-3">
+        {/* View */}
+        <button
+          type="button"
+          onClick={() => openView(product)}
+          className="
+            w-9
+            h-9
+            flex
+            items-center
+            justify-center
+            border
+            border-gray-300
+            rounded-lg
+            cursor-pointer
+            hover:bg-white
+            transition
+          "
+        >
+          <Eye
+            color="blue"
+            size={18}
+          />
+        </button>
+
+        {/* Edit */}
+        <button
+          type="button"
+          onClick={() => openEdit(product)}
+          className="
+            w-9
+            h-9
+            flex
+            items-center
+            justify-center
+            border
+            border-gray-300
+            rounded-lg
+            cursor-pointer
+            hover:bg-white
+            transition
+          "
+        >
+          <Edit
+            className="text-yellow-500"
+            size={18}
+          />
+        </button>
+
+        {/* Delete */}
+        <button
+          type="button"
+          onClick={() => openDelete(product)}
+          className="
+            w-9
+            h-9
+            flex
+            items-center
+            justify-center
+            border
+            border-gray-300
+            rounded-lg
+            cursor-pointer
+            hover:bg-white
+            transition
+          "
+        >
+          <Trash2
+            className="text-red-500"
+            size={18}
+          />
+        </button>
       </div>
-      </div>
+    </div>
+  ))}
+</div>
     </div>
   )
 }

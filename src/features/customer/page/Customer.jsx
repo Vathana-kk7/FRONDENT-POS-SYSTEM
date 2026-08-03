@@ -1,129 +1,78 @@
-import React, { useState } from "react";
+import { Download, File, FileSpreadsheet, FileText, Plus } from 'lucide-react'
+import React, { useState } from 'react'
+import SortableCard from '../components/SortableCard';
+import { closestCenter, DndContext } from '@dnd-kit/core';
+import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import { Customerdata } from '../data/Customerdata';
+import { useCustomerLayout } from '../../../context/CustomerLayoutContext';
+import CustomerFilter from '../components/CustomerFilter';
+import CustomerTable from '../components/CustomerTable';
+import CustomerPagination from '../components/CustomerPagination';
+import { useCustomer } from '../../../context/CustomerContext';
+import DeleteModal from '../../../components/common/Delete';
+import ModelCustomer from '../components/ModelCustomer';
+import EditeCustomer from '../components/EditeCustomer';
 
-import CategoryCart from "../components/CategoryCart";
-import CategoryFilter from "../components/CategoryFilter";
-import CategoryTable from "../components/CategoryTable";
-import EditeCategory from "../components/EditeCategory";
-import ModelCategory from "../components/ModelCategory";
-
-import { Categorydata } from "../data/Categorydata";
-
-import { useCategory } from "../../../context/CategoryContext";
-import { useCategoryLayout } from "../../../context/CategoryLayoutContext";
-
-import DeleteModal from "../../../components/common/Delete";
-
-import { Download, Plus } from "lucide-react";
-import {
-  FileText,
-  FileSpreadsheet,
-  File,
-} from "lucide-react";
-
-import {
-  DndContext,
-  closestCenter,
-} from "@dnd-kit/core";
-
-import {
-  SortableContext,
-  rectSortingStrategy,
-  arrayMove,
-} from "@dnd-kit/sortable";
-
-import SortableCard from "../components/SortableCard";
-import CategoryPagination from "../components/CategoryPagination";
-
-
-function Category() {
-
-  // ==============================
-  // Category Layout
-  // ==============================
-
-  const { drag, setDrag } = useCategoryLayout();
-
-  // ==============================
-  // Cards
-  // ==============================
-
-  const [cards, setCards] = useState(Categorydata);
-
-  // ==============================
-  // Import Dropdown
-  // ==============================
-
-  const [isImportOpen, setIsImportOpen] = useState(false);
-
-  // ==============================
-  // Category Modal Context
-  // ==============================
-
-  const {
-    isAddOpen,
-    isDeleteOpen,
-    isViewOpen,
-    isEditOpen,
-
-    selectedCategory,
-
-    openAdd,
-    openView,
-    openEdit,
-    openDelete,
-
-    closeAdd,
-    closeView,
-    closeEdit,
-    closeDelete,
-  } = useCategory();
-
-
-  // ==============================
-  // Drag & Drop
-  // ==============================
-
-  function handleDragEnd(event) {
-
-    const { active, over } = event;
-
-    if (!over) return;
-
-    if (active.id !== over.id) {
-
-      const oldIndex = cards.findIndex(
-        (item) => item.id === active.id
-      );
-
-      const newIndex = cards.findIndex(
-        (item) => item.id === over.id
-      );
-
-      setCards(
-        arrayMove(
-          cards,
-          oldIndex,
-          newIndex
-        )
-      );
+function Customer() {
+    // ==============================
+    // Category Layout
+    // ==============================
+  
+    const { drages, setDrages } = useCustomerLayout();
+    function handleDragEnd(event) {
+  
+      const { active, over } = event;
+  
+      if (!over) return;
+  
+      if (active.id !== over.id) {
+  
+        const oldIndex = cards.findIndex(
+          (item) => item.id === active.id
+        );
+  
+        const newIndex = cards.findIndex(
+          (item) => item.id === over.id
+        );
+  
+        setCards(
+          arrayMove(
+            cards,
+            oldIndex,
+            newIndex
+          )
+        );
+      }
     }
-  }
-
-
+    const [isImportOpen, setIsImportOpen] = useState(false);
+    const [cards, setCards] = useState(Customerdata);
+    const {
+        isAddOpen,
+        isDeleteOpen,
+        isViewOpen,
+        isEditOpen,
+    
+        selectedCategory,
+    
+        openAdd,
+        openView,
+        openEdit,
+        openDelete,
+    
+        closeAdd,
+        closeView,
+        closeEdit,
+        closeDelete,
+      } = useCustomer();
   return (
-    <div className="px-5">
-
-      {/* ================================= */}
-      {/* Header */}
-      {/* ================================= */}
-
-      <div className="flex justify-between">
+    <div>
+       <div className="flex justify-between">
 
         <h1 className="text-xl font-medium">
           Categories
         </h1>
 
-
+      {/* Header */}
         <div className="flex gap-3">
 
           {/* Add Category */}
@@ -150,7 +99,7 @@ function Category() {
             <Plus size={20} />
 
             <span className="ms-2">
-              Add Category
+              Add Customer
             </span>
 
           </button>
@@ -299,10 +248,7 @@ function Category() {
           </div>
 
         </div>
-
       </div>
-
-
       {/* ================================= */}
       {/* Category Cards */}
       {/* ================================= */}
@@ -333,7 +279,7 @@ function Category() {
               <SortableCard
                 key={card.id}
                 card={card}
-                disabled={!drag}
+                disabled={!drages}
               />
 
             ))}
@@ -343,27 +289,20 @@ function Category() {
         </SortableContext>
 
       </DndContext>
-
-
-      {/* ================================= */}
-      {/* Category Content */}
-      {/* ================================= */}
-
       <div className="w-full h-full bg-white shadow-lg mt-5">
 
-        <CategoryFilter />
+        <CustomerFilter/>
 
-        <CategoryTable
+        <CustomerTable
           onView={openView}
           onEdit={openEdit}
           onDelete={openDelete}
         />
         <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
           <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
-          <CategoryPagination />
+          <CustomerPagination />
         </div>
       </div>
-
 
       {/* ================================= */}
       {/* Edit Category */}
@@ -371,7 +310,7 @@ function Category() {
 
       {isEditOpen && (
 
-        <EditeCategory
+        <EditeCustomer
           category={selectedCategory}
           closeEdit={closeEdit}
         />
@@ -385,7 +324,7 @@ function Category() {
 
       {isAddOpen && (
 
-        <ModelCategory
+        <ModelCustomer
           onClose={closeAdd}
         />
 
@@ -418,7 +357,7 @@ function Category() {
       )}
 
     </div>
-  );
+  )
 }
 
-export default Category;
+export default Customer

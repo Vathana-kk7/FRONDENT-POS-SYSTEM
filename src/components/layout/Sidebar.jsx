@@ -11,7 +11,7 @@ function Sidebar() {
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "Products", path: "/product", icon: Package },
   { label: "Categories", path: "/category", icon: FolderTree },
-  { label: "Customers", path: "/customers", icon: Users },
+  { label: "Customer", path: "/customer", icon: Users },
   { label: "Sales", path: "/sales", icon: TrendingUp },
   { label: "Supplier", path: "/supplier", icon: Truck },
   { label: "Purchase", path: "/purchase", icon: ShoppingCart },

@@ -1,8 +1,15 @@
 import { Settings, Grip } from "lucide-react";
 import { useProductLayout } from "../../../context/ProductLayoutContext";
+import { useCategoryLayout } from "../../../context/CategoryLayoutContext";
+import { useDashboardLayout } from "../../../context/DashboardLayoutContext";
+import { useCustomerLayout } from "../../../context/CustomerLayoutContext";
 
 function Setting() {
   const { dragEnabled, setDragEnabled } = useProductLayout();
+  const { drag, setDrag } = useCategoryLayout();
+  const { drage, setDrage } = useDashboardLayout();
+  const { drages, setDrages } = useCustomerLayout();
+
 
   return (
     <div className="p-6">
@@ -45,7 +52,7 @@ function Setting() {
           <button
             onClick={() => setDragEnabled(!dragEnabled)}
             className={`
-              relative w-14 h-7 rounded-full transition
+              relative cursor-pointer w-14 h-7 rounded-full transition
               ${dragEnabled ? "bg-blue-600" : "bg-gray-300"}
             `}
           >
@@ -56,6 +63,60 @@ function Setting() {
                 w-5 h-5 bg-white rounded-full
                 transition-transform
                 ${dragEnabled ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() => setDrag(!drag)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${drag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${drag ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() => setDrage(!drage)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${drag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${drage ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() => setDrages(!drages)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${drag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${drage ? "translate-x-7" : ""}
               `}
             />
 

@@ -12,6 +12,7 @@ import GoogleCallback from "../features/auth/pages/GoogleCallback";
 import Product from "../features/product/pages/product";
 import Category from "../features/category/pages/category";
 import Setting from "../features/setting/pages/Setting";
+import Customer from "../features/customer/page/customer";
 
 export const router = createBrowserRouter([
   // 1. Public Routes ប្រើប្រាស់ AuthLayout
@@ -43,7 +44,9 @@ export const router = createBrowserRouter([
       { path: "/dashboard", element: <DashboardPage /> },
       {path : "/product", element: <Product/> },
       {path : "/category", element : <Category /> },
-      {path : "/setting", element : <Setting/>}
+      {path : "/customer", element : <Customer/>},
+      {path : "/setting", element : <Setting/>},
+
     ],
   },
 ]);

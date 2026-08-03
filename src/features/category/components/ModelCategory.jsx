@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import React from "react";
 
-function ModelProduct({ onClose }) {
+function ModelCategory({ onClose }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
       <div className="bg-white w-[1100px] h-[800px] rounded-xl shadow-xl p-6"> 
@@ -88,24 +88,24 @@ function ModelProduct({ onClose }) {
         </div> 
         <div className="flex gap-5">
             <div>
-                <label className="font-semibold">Selling Price <span className="text-red-600">*</span></label>
+                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
                 <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
             </div>
             <div>
-                <label className="font-semibold">Cost Price<span className="text-red-600">*</span></label>
+                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
                 <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
             </div>
             <div>
-                <label className="font-semibold">Stock Quantity<span className="text-red-600">*</span></label>
+                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
                 <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
             </div>
             <div>
-                <label className="font-semibold">Low Stock Alert<span className="text-red-600">*</span></label>
+                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
                 <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
             </div>
         </div>
         <div className="mt-5">
-            <label className="font-semibold">Description<span className="text-red-600">*</span></label>
+            <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
             <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
         </div>
         <div className="flex justify-between mt-15">
@@ -122,4 +122,4 @@ function ModelProduct({ onClose }) {
   );
 }
 
-export default ModelProduct;
+export default ModelCategory;
