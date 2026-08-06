@@ -3,13 +3,18 @@ import { useProductLayout } from "../../../context/ProductLayoutContext";
 import { useCategoryLayout } from "../../../context/CategoryLayoutContext";
 import { useDashboardLayout } from "../../../context/DashboardLayoutContext";
 import { useCustomerLayout } from "../../../context/CustomerLayoutContext";
+import { useSaleOrderLayout } from "../../../context/SaleOrderLayoutContext";
+import { usePurchaseOrderLayout } from "../../../context/PurchaseOrderlayoutContext";
+import { useGoodReceivedLayout } from "../../../context/GoodReceivedLayout";
 
 function Setting() {
   const { dragEnabled, setDragEnabled } = useProductLayout();
+  const { dragEnablede, setDragEnablede } = useSaleOrderLayout();
   const { drag, setDrag } = useCategoryLayout();
   const { drage, setDrage } = useDashboardLayout();
   const { drages, setDrages } = useCustomerLayout();
-
+  const { dragEnabledes, setDragEnabledes } = usePurchaseOrderLayout();
+  const { dragcart, setDragcart } = useGoodReceivedLayout();
 
   return (
     <div className="p-6">
@@ -121,7 +126,61 @@ function Setting() {
             />
 
           </button>
+          <button
+            onClick={() => setDragEnablede(!dragEnablede)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${drag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
 
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${drage ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() => setDragEnabledes(!dragEnabledes)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragEnabledes ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragEnabledes ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          
+          <button
+            onClick={() => setDragcart(!dragcart)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragcart ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragcart ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
         </div>
 
 

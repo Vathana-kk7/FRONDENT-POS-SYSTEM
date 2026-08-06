@@ -65,7 +65,7 @@ function Customer() {
         closeDelete,
       } = useCustomer();
   return (
-    <div>
+    <div className="px-5">
        <div className="flex justify-between">
 
         <h1 className="text-xl font-medium">

@@ -61,7 +61,7 @@ function Dashboard() {
   return (
     <div>
       {/* Header */}
-      <div className='flex justify-between'>
+      <div className='flex justify-between px-5'>
           <div className='flex gap-3 justify-center items-center'>
             <Home size={20} color="black"/>
             <h1 className='font-medium text-xl'>Dashboard</h1>

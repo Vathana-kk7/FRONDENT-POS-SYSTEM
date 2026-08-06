@@ -10,6 +10,10 @@ import { CategoryLayoutProvider } from "../context/CategoryLayoutContext";
 import { DashboardLayoutProvider } from "../context/DashboardLayoutContext";
 import { CustomerLayoutProvider } from "../context/CustomerLayoutContext";
 import { CustomerProvider } from "../context/CustomerContext";
+import { SaleOrderLayoutProvider } from "../context/SaleOrderLayoutContext";
+import { SaleOrderProvider } from "../context/SaleOrderContext";
+import { PurchaseOrderLayoutProvider } from "../context/PurchaseOrderlayoutContext";
+import { GoodReceivedLayoutProvider } from "../context/GoodReceivedLayout";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
    <AuthProvider>
@@ -18,11 +22,19 @@ createRoot(document.getElementById("root")).render(
         <CustomerProvider>
           <DashboardLayoutProvider>
             <CustomerLayoutProvider>
-              <ProductProvider>
-                <CategoryProvider>
-                  <App />
-                </CategoryProvider>
-              </ProductProvider>
+              <SaleOrderLayoutProvider>
+                <PurchaseOrderLayoutProvider>
+                  <GoodReceivedLayoutProvider>
+                    <ProductProvider>
+                      <CategoryProvider>
+                        <SaleOrderProvider>
+                          <App />
+                        </SaleOrderProvider>
+                      </CategoryProvider>
+                    </ProductProvider>
+                  </GoodReceivedLayoutProvider>
+                </PurchaseOrderLayoutProvider>
+              </SaleOrderLayoutProvider>
             </CustomerLayoutProvider>
           </DashboardLayoutProvider>
         </CustomerProvider>

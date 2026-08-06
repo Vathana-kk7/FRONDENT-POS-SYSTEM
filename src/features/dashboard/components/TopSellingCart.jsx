@@ -2,7 +2,7 @@ import React from 'react'
 
 function TopSellingCart() {
   return (
-    <div className='border border-gray-200 rounded-lg p-5 shadow-lg'>
+    <div className='border border-gray-200 rounded-lg p-5 shadow-lg px-5'>
         <h1 className='font-medium'>TopSellingCart</h1>
         <div className='flex justify-between mt-2 border-b-gray-200 border-b pb-3'>
             <div className='flex gap-3 justify-center items-center'>
