@@ -14,6 +14,8 @@ import { SaleOrderLayoutProvider } from "../context/SaleOrderLayoutContext";
 import { SaleOrderProvider } from "../context/SaleOrderContext";
 import { PurchaseOrderLayoutProvider } from "../context/PurchaseOrderlayoutContext";
 import { GoodReceivedLayoutProvider } from "../context/GoodReceivedLayout";
+import { PurchaseReturnLayoutProvider } from "../context/PurchaseReturnLayoutContext";
+import { StockTransferLayoutProvider } from "../context/StockTransferLayoutContext";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
    <AuthProvider>
@@ -25,13 +27,17 @@ createRoot(document.getElementById("root")).render(
               <SaleOrderLayoutProvider>
                 <PurchaseOrderLayoutProvider>
                   <GoodReceivedLayoutProvider>
-                    <ProductProvider>
-                      <CategoryProvider>
-                        <SaleOrderProvider>
-                          <App />
-                        </SaleOrderProvider>
-                      </CategoryProvider>
-                    </ProductProvider>
+                    <PurchaseReturnLayoutProvider>
+                      <StockTransferLayoutProvider>
+                        <ProductProvider>
+                          <CategoryProvider>
+                            <SaleOrderProvider>
+                              <App />
+                            </SaleOrderProvider>
+                          </CategoryProvider>
+                        </ProductProvider>
+                      </StockTransferLayoutProvider>
+                    </PurchaseReturnLayoutProvider>
                   </GoodReceivedLayoutProvider>
                 </PurchaseOrderLayoutProvider>
               </SaleOrderLayoutProvider>

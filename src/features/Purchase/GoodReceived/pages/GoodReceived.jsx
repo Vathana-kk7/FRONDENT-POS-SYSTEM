@@ -1,11 +1,13 @@
 import { closestCenter, DndContext } from '@dnd-kit/core'
-import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { ChevronDown, Ellipsis, Filter, Plus } from 'lucide-react'
 import React, { useState } from 'react'
 import { GoodReceivedCards } from '../data/GoodReceiveddata';
 import { useGoodReceivedLayout } from '../../../../context/GoodReceivedLayout';
 import SortableCard from '../components/SortableCard';
 import GoodReceivedTable from '../components/GoodReceivedTable';
+import GoodReceivedUnderTable from '../components/GoodReceivedUnderTable';
+import GRNDetail from '../components/GRNDetail';
 
 function GoodReceived() {
   const [cards, setCards] = useState(GoodReceivedCards);
@@ -83,6 +85,10 @@ function GoodReceived() {
           </SortableContext>
         </DndContext>
         <GoodReceivedTable/>
+        <div className='flex gap-5'>
+            <GRNDetail/>
+            <GoodReceivedUnderTable/>
+        </div>
     </div>
   )
 }

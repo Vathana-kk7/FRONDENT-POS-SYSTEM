@@ -6,6 +6,8 @@ import { useCustomerLayout } from "../../../context/CustomerLayoutContext";
 import { useSaleOrderLayout } from "../../../context/SaleOrderLayoutContext";
 import { usePurchaseOrderLayout } from "../../../context/PurchaseOrderlayoutContext";
 import { useGoodReceivedLayout } from "../../../context/GoodReceivedLayout";
+import { usePurchaseReturnLayout } from "../../../context/PurchaseReturnLayoutContext";
+import { useStockTransferLayout } from "../../../context/StockTransferLayoutContext";
 
 function Setting() {
   const { dragEnabled, setDragEnabled } = useProductLayout();
@@ -15,6 +17,8 @@ function Setting() {
   const { drages, setDrages } = useCustomerLayout();
   const { dragEnabledes, setDragEnabledes } = usePurchaseOrderLayout();
   const { dragcart, setDragcart } = useGoodReceivedLayout();
+  const { dragIsopen, setDragIsopen } = usePurchaseReturnLayout();
+  const { dragIsopenes, setDragIsopenes } = useStockTransferLayout();
 
   return (
     <div className="p-6">
@@ -177,6 +181,45 @@ function Setting() {
                 w-5 h-5 bg-white rounded-full
                 transition-transform
                 ${dragcart ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+         
+
+          <button
+            onClick={() => setDragIsopen(!dragIsopen)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragIsopen ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragIsopen ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+
+          <button
+            onClick={() => setDragIsopenes(!dragIsopenes)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragIsopenes ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragIsopenes ? "translate-x-7" : ""}
               `}
             />
 

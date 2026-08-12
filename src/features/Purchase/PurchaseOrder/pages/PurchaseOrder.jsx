@@ -4,7 +4,7 @@ import PurchaseOrderCart from '../components/PurchaseOrderCart'
 import { PurchaseCards } from '../data/Purchasedata';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import { usePurchaseOrderLayout } from '../../../../context/PurchaseOrderlayoutContext';
-import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
+import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import SortableCard from '../components/SortableCard';
 import PurchaseOrderTable from '../components/PurchaseOrderTable';
 import PurchaseCartReport from '../components/PurchaseCartReport';

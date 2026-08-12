@@ -16,6 +16,7 @@ import {
   Receipt,
   CreditCard,
   RotateCcw,
+  HousePlus,
 } from "lucide-react";
 
 import PromoCard from "./PromoCard";
@@ -466,7 +467,7 @@ function Sidebar() {
             `}
           >
             <div className="flex items-center gap-3">
-              <TrendingUp
+              <HousePlus
                 size={18}
                 className="transition-transform duration-300 group-hover:scale-110"
               />

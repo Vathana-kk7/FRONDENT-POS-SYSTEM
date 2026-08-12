@@ -1,7 +1,7 @@
 import { Eye, MoreVertical } from 'lucide-react'
 import React from 'react'
-import  {GoodReceivedData} from '../data/GoodReceiveddata'
-function GoodReceivedTable() {
+import  {GoodReceivedData} from '../data/ReturnCatedata'
+function ReturnTable() {
     
   return (
     <div className='mt-5 overflow-auto  rounded-xl border scrollbar-none h-[575px] border-gray-200 bg-white shadow-sm'>
@@ -55,4 +55,4 @@ function GoodReceivedTable() {
   )
 }
 
-export default GoodReceivedTable
+export default ReturnTable
