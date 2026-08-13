@@ -207,6 +207,7 @@ function Product() {
           </div>
         </div>
       </div>
+      {/* Cart */}
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

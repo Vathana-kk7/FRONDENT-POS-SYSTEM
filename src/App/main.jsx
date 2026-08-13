@@ -16,6 +16,12 @@ import { PurchaseOrderLayoutProvider } from "../context/PurchaseOrderlayoutConte
 import { GoodReceivedLayoutProvider } from "../context/GoodReceivedLayout";
 import { PurchaseReturnLayoutProvider } from "../context/PurchaseReturnLayoutContext";
 import { StockTransferLayoutProvider } from "../context/StockTransferLayoutContext";
+import { StockTransferAllLayoutProvider } from "../context/StockTransferAllLayoutContext";
+import { StockTransferHistoryLayoutProvider } from "../context/StockTransferHistoryLayoutContext";
+import { UserAllLayoutProvider } from "../context/UserAllLayoutContext";
+import { UserRolesLayoutProvider } from "../context/UserRolesLayoutContext";
+import { SupplierLayoutProvider } from "../context/SupplierLayoutContext";
+import { ReportLayoutProvider } from "../context/ReportLayoutContext";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
    <AuthProvider>
@@ -29,13 +35,25 @@ createRoot(document.getElementById("root")).render(
                   <GoodReceivedLayoutProvider>
                     <PurchaseReturnLayoutProvider>
                       <StockTransferLayoutProvider>
-                        <ProductProvider>
-                          <CategoryProvider>
-                            <SaleOrderProvider>
-                              <App />
-                            </SaleOrderProvider>
-                          </CategoryProvider>
-                        </ProductProvider>
+                        <StockTransferAllLayoutProvider>
+                          <StockTransferHistoryLayoutProvider>
+                            <UserAllLayoutProvider>
+                              <UserRolesLayoutProvider>
+                                <SupplierLayoutProvider>
+                                  <ReportLayoutProvider>
+                                    <ProductProvider>
+                                      <CategoryProvider>
+                                        <SaleOrderProvider>
+                                          <App />
+                                        </SaleOrderProvider>
+                                      </CategoryProvider>
+                                    </ProductProvider>
+                                  </ReportLayoutProvider>
+                                </SupplierLayoutProvider>
+                              </UserRolesLayoutProvider>
+                            </UserAllLayoutProvider>
+                          </StockTransferHistoryLayoutProvider>
+                        </StockTransferAllLayoutProvider>
                       </StockTransferLayoutProvider>
                     </PurchaseReturnLayoutProvider>
                   </GoodReceivedLayoutProvider>

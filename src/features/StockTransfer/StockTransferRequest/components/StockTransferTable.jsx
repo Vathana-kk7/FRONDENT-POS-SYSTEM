@@ -4,7 +4,7 @@ import  {GoodReceivedData} from '../data/stockdata'
 function StockTransferTable() {
     
   return (
-    <div className='mt-5 overflow-auto  rounded-xl border scrollbar-none h-[575px] border-gray-200 bg-white shadow-sm'>
+    <div className='mt-5 max-h-[450px] overflow-x-auto overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-sm scrollbar-none'>
         <table className='min-w-full text-sm font-medium '>
             <thead className="sticky top-0 z-50 bg-gray-100 overflow-y-auto ">
                 <tr className="text-left text-gray-700">

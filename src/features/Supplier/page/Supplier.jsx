@@ -1,10 +1,35 @@
 import { ChevronDown, Download, Ellipsis, Filter, Plus, Printer } from 'lucide-react'
-import React from 'react'
-import SupplierCart from '../components/SupplierCart'
+import React, { useState } from 'react'
 import SupplierTable from '../components/SupplierTable'
 import SupplierPagination from '../components/SupplierPagination'
+import { ProductsCards } from '../data/Supplierdata'
+import { useSupplierLayout } from '../../../context/SupplierLayoutContext'
+import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable'
+import { closestCenter, DndContext } from '@dnd-kit/core'
+import SortableCard from '../../product/components/SortableCard'
 
 function Supplier() {
+  const { Opendraged } = useSupplierLayout();
+  const [cards, setCards] = useState(ProductsCards);
+  function handleDragEnd(event) {
+
+    const { active, over } = event;
+
+    if (!over) return;
+
+    if (active.id !== over.id) {
+
+      const oldIndex = cards.findIndex(
+        (item) => item.id === active.id
+      );
+
+      const newIndex = cards.findIndex(
+        (item) => item.id === over.id
+      );
+
+      setCards(arrayMove(cards, oldIndex, newIndex));
+    }
+  }
   return (
     <div className='px-5'>
        {/* button */}
@@ -40,7 +65,27 @@ function Supplier() {
           </div>
         </div>
         <div>
-            <SupplierCart/>
+          {/* Cart */}
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={cards}
+              strategy={rectSortingStrategy}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-5">
+    
+                {cards.map((card) => (
+                  <SortableCard
+                    key={card.id}
+                    card={card}
+                    disabled={!Opendraged}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
             <SupplierTable/>
             <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
               <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>

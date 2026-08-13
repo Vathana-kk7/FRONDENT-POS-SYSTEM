@@ -8,6 +8,12 @@ import { usePurchaseOrderLayout } from "../../../context/PurchaseOrderlayoutCont
 import { useGoodReceivedLayout } from "../../../context/GoodReceivedLayout";
 import { usePurchaseReturnLayout } from "../../../context/PurchaseReturnLayoutContext";
 import { useStockTransferLayout } from "../../../context/StockTransferLayoutContext";
+import { useStockTransferAllLayout } from "../../../context/StockTransferAllLayoutContext";
+import { StockTransferHistoryLayout } from "../../../context/StockTransferHistoryLayoutContext";
+import { useUserAllLayout } from "../../../context/UserAllLayoutContext";
+import { useUserRolesLayout } from "../../../context/UserRolesLayoutContext";
+import { useSupplierLayout } from "../../../context/SupplierLayoutContext";
+import { useReportLayout } from "../../../context/ReportLayoutContext";
 
 function Setting() {
   const { dragEnabled, setDragEnabled } = useProductLayout();
@@ -19,7 +25,12 @@ function Setting() {
   const { dragcart, setDragcart } = useGoodReceivedLayout();
   const { dragIsopen, setDragIsopen } = usePurchaseReturnLayout();
   const { dragIsopenes, setDragIsopenes } = useStockTransferLayout();
-
+  const { dragIsopened, setDragIsopened } = useStockTransferAllLayout();
+  const { dragIsopenies, setDragIsopenies } = StockTransferHistoryLayout();
+  const { Opendrag, setOpenDrag } = useUserAllLayout();
+  const { Opendrages, setOpenDrages } = useUserRolesLayout();
+  const { Opendraged, setOpenDraged } = useSupplierLayout();
+  const { Showdrag, setShowDrag } = useReportLayout(); 
   return (
     <div className="p-6">
       <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
@@ -220,6 +231,133 @@ function Setting() {
                 w-5 h-5 bg-white rounded-full
                 transition-transform
                 ${dragIsopenes ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+
+          <button
+            onClick={() => setDragIsopened(!dragIsopened)} 
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragIsopened ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragIsopened ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() =>setDragIsopenies(!dragIsopenies)} 
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragIsopenies ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragIsopenies ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() =>setOpenDrag(!Opendrag)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${Opendrag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${Opendrag ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() =>setOpenDrag(!Opendrag)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${Opendrag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${Opendrag ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() =>setOpenDrages(!Opendrages)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${Opendrages ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${Opendrages ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() =>setOpenDraged(!Opendraged)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${Opendraged ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${Opendraged ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
+          <button
+            onClick={() =>setShowDrag(!Showdrag)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${Showdrag ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
+
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${Showdrag ? "translate-x-7" : ""}
               `}
             />
 

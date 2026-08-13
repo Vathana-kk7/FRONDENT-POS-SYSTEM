@@ -1,3 +1,5 @@
+import { CircleSlash2, DollarSign, PackageSearch, Pin, ShoppingBag, ShoppingCart, Users, UsersRound } from "lucide-react";
+
 export const supplier=[
         {
             id: 1,
@@ -126,3 +128,38 @@ export const supplier=[
             totalPayable: "$0.00",
         },
     ]
+
+    export const ProductsCards = [
+  {
+    id: 1,
+    title: "Total Products",
+    value: 1200,
+    growth: "8.5%",
+    color: "bg-blue-600",
+    icon: UsersRound,
+  },
+  {
+    id: 2,
+    title: "Low Stock",
+    value: 356,
+    growth: "5.2%",
+    color: "bg-green-600",
+    icon: Pin,
+  },
+  {
+    id: 3,
+    title: "Out of Stock",
+    value: 90,
+    growth: "12%",
+    color: "bg-purple-600",
+    icon: CircleSlash2,
+  },
+  {
+    id: 4,
+    title: "Total Value",
+    value: "$25,000",
+    growth: "15%",
+    color: "bg-orange-500",
+    icon: ShoppingBag,
+  },
+];
