@@ -10,7 +10,7 @@ function TrasferStatus() {
   return (
     <div className="border border-gray-200 rounded-lg p-5 shadow-lg ">
       <h1 className="font-medium text-gray-800">
-        Sale Payment Method
+        Transfer Status Distribution
       </h1>
 
       <div className="mt-5 flex items-center gap-3 w-[475px] mb-12">

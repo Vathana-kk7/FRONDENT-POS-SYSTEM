@@ -22,6 +22,13 @@ import { UserAllLayoutProvider } from "../context/UserAllLayoutContext";
 import { UserRolesLayoutProvider } from "../context/UserRolesLayoutContext";
 import { SupplierLayoutProvider } from "../context/SupplierLayoutContext";
 import { ReportLayoutProvider } from "../context/ReportLayoutContext";
+import { BrandProvider } from "../context/BrandContext";
+import { BrandLayoutProvider } from "../context/BrandLayoutContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
    <AuthProvider>
@@ -41,13 +48,19 @@ createRoot(document.getElementById("root")).render(
                               <UserRolesLayoutProvider>
                                 <SupplierLayoutProvider>
                                   <ReportLayoutProvider>
-                                    <ProductProvider>
-                                      <CategoryProvider>
-                                        <SaleOrderProvider>
-                                          <App />
-                                        </SaleOrderProvider>
-                                      </CategoryProvider>
-                                    </ProductProvider>
+                                    <BrandLayoutProvider>
+                                      <ProductProvider>
+                                        <CategoryProvider>
+                                          <BrandProvider>
+                                            <SaleOrderProvider>
+                                              <QueryClientProvider client={queryClient}>
+                                                <App />
+                                              </QueryClientProvider>
+                                            </SaleOrderProvider>
+                                          </BrandProvider>
+                                        </CategoryProvider>
+                                      </ProductProvider>
+                                  </BrandLayoutProvider>
                                   </ReportLayoutProvider>
                                 </SupplierLayoutProvider>
                               </UserRolesLayoutProvider>

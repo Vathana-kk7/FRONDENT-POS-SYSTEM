@@ -138,3 +138,154 @@ export const ProductsCards = [
     icon: DollarSign,
   },
 ];
+
+export const transferRequestData = [
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Lagos Warehouse",
+    totalTransfers: 5,
+    itemsTransferred: 32,
+    percentage: "23.8%",
+  },
+  {
+    location: "Abuja Warehouse",
+    totalTransfers: 4,
+    itemsTransferred: 21,
+    percentage: "19.0%",
+  },
+  {
+    location: "Port Harcourt Store",
+    totalTransfers: 3,
+    itemsTransferred: 18,
+    percentage: "14.3%",
+  },
+  {
+    location: "Ibadan Store",
+    totalTransfers: 2,
+    itemsTransferred: 12,
+    percentage: "9.5%",
+  },
+];
+export const transferData = [
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Lagos Warehouse",
+    totalTransfers: 5,
+    itemsTransferred: 32,
+    percentage: "23.8%",
+  },
+  {
+    location: "Abuja Warehouse",
+    totalTransfers: 4,
+    itemsTransferred: 21,
+    percentage: "100.0%",
+  },
+  {
+    location: "Port Harcourt Store",
+    totalTransfers: 3,
+    itemsTransferred: 18,
+    percentage: "14.3%",
+  },
+  {
+    location: "Ibadan Store",
+    totalTransfers: 2,
+    itemsTransferred: 12,
+    percentage: "9.5%",
+  },
+];
+export const RecentTransfers = [
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Main Warehouse",
+    totalTransfers: 7,
+    itemsTransferred: 41,
+    percentage: "33.3%",
+  },
+  {
+    location: "Lagos Warehouse",
+    totalTransfers: 5,
+    itemsTransferred: 32,
+    percentage: "23.8%",
+  },
+  {
+    location: "Abuja Warehouse",
+    totalTransfers: 4,
+    itemsTransferred: 21,
+    percentage: "19.0%",
+  },
+  {
+    location: "Port Harcourt Store",
+    totalTransfers: 3,
+    itemsTransferred: 18,
+    percentage: "14.3%",
+  },
+  {
+    location: "Ibadan Store",
+    totalTransfers: 2,
+    itemsTransferred: 12,
+    percentage: "9.5%",
+  },
+];

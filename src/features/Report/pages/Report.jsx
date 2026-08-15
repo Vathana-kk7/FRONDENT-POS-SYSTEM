@@ -9,6 +9,10 @@ import { useReportLayout } from '../../../context/ReportLayoutContext'
 import CustomLineMarks from '../components/Chart'
 import TrasferStatus from '../components/TrasferStatus'
 import TopLocationsByTransfers from '../components/TopLocationsByTransfers'
+import ImformationTransfer from '../components/ImformationTransfer'
+import ImformationTransferRequest from '../components/ImformationTransferRequest'
+import RecntTransfer from '../components/RecntTransfer'
+import RecentOrder from '../components/RecentOrder'
 
 function Report() {
   const {Showdrag}=useReportLayout();
@@ -86,6 +90,20 @@ function Report() {
               <TopLocationsByTransfers/>
           </div>
       </div>
+        <div className='flex gap-5 w-[100%] h-[400px] mb-5'>
+          <div className='w-[38%]'>
+            {/* <CustomLineMarks/> */}
+            <ImformationTransfer/>
+          </div>
+          <div className='w-[28.5%]'>
+             <ImformationTransferRequest/>
+          </div>
+          <div className='w-[33.5%] '>
+              {/* <RecntTransfer/> */}
+              <RecentOrder/>
+          </div>
+      </div>
+
     </div>
   )
 }

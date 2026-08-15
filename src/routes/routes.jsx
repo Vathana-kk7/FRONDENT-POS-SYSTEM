@@ -28,6 +28,7 @@ import StockTransferRequest from "../features/StockTransfer/StockTransferRequest
 import Report from "../features/Report/pages/Report";
 import AllUsers from "../features/Users/AllUsers/pages/AllUsers";
 import Roles from "../features/Users/Roles/pages/Roles";
+import Brand from "../features/brand/page/Brand";
 
 export const router = createBrowserRouter([
   // 1. Public Routes ប្រើប្រាស់ AuthLayout
@@ -76,6 +77,7 @@ export const router = createBrowserRouter([
       {path : "/reports", element : <Report/>},
       {path : "/alluser", element : <AllUsers/>},
       {path : "/roles", element : <Roles/>},
+      {path : "/brand", element : <Brand/>},
 
     ],
   },

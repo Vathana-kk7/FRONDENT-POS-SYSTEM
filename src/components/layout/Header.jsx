@@ -18,9 +18,11 @@ export default function Header() {
       {/* Company Info - ខាងឆ្វេង */}
       <div className="flex items-center gap-2">
         <div className="flex justify-center items-center">
-          <div className="border-2 text-gray-200 rounded-lg w-12 h-12 flex justify-center items-center">
-            <span className="text-black text-red-600 font-bold text-sm ">POS</span>
-          </div>
+          <img
+              src="/public/Logo_POS.png"
+              alt="avatar"
+              className="w-12 h-12 rounded-lg object-cover border border-gray-300 shadow-sm cursor-pointer"
+            />
         </div>
         <span className="font-bold text-lg text-gray-800">
           {user?.companyName || "Top Most Systems Ltd"}

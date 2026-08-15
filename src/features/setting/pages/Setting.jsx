@@ -1,392 +1,204 @@
-import { Settings, Grip } from "lucide-react";
-import { useProductLayout } from "../../../context/ProductLayoutContext";
-import { useCategoryLayout } from "../../../context/CategoryLayoutContext";
-import { useDashboardLayout } from "../../../context/DashboardLayoutContext";
-import { useCustomerLayout } from "../../../context/CustomerLayoutContext";
-import { useSaleOrderLayout } from "../../../context/SaleOrderLayoutContext";
-import { usePurchaseOrderLayout } from "../../../context/PurchaseOrderlayoutContext";
-import { useGoodReceivedLayout } from "../../../context/GoodReceivedLayout";
-import { usePurchaseReturnLayout } from "../../../context/PurchaseReturnLayoutContext";
-import { useStockTransferLayout } from "../../../context/StockTransferLayoutContext";
-import { useStockTransferAllLayout } from "../../../context/StockTransferAllLayoutContext";
-import { StockTransferHistoryLayout } from "../../../context/StockTransferHistoryLayoutContext";
-import { useUserAllLayout } from "../../../context/UserAllLayoutContext";
-import { useUserRolesLayout } from "../../../context/UserRolesLayoutContext";
-import { useSupplierLayout } from "../../../context/SupplierLayoutContext";
-import { useReportLayout } from "../../../context/ReportLayoutContext";
+import React, { useState } from "react";
+import {
+  Settings as SettingsIcon,
+  Store,
+  FileText,
+  CreditCard,
+  Receipt,
+  Users,
+  Bell,
+  History,
+  Puzzle,
+  Info,
+  Barcode,
+  Volume2,
+  Printer,
+  Trash2,
+  Sun,
+  Moon,
+  Monitor,
+  Database,
+  Clock,
+  ShieldCheck,
+  Download,
+  RotateCcw,
+  ChevronDown,
+  CalendarDays,
+} from "lucide-react";
+import GeneralSettings from "../components/GeneralSettings";
+import ApplicationSettings from "../components/ApplicationSettings";
+import ThemeSettings from "../components/ThemeSettings";
+import BackupData from "../components/BackupData";
+import SystemInformation from "../components/SystemInformation";
 
 function Setting() {
-  const { dragEnabled, setDragEnabled } = useProductLayout();
-  const { dragEnablede, setDragEnablede } = useSaleOrderLayout();
-  const { drag, setDrag } = useCategoryLayout();
-  const { drage, setDrage } = useDashboardLayout();
-  const { drages, setDrages } = useCustomerLayout();
-  const { dragEnabledes, setDragEnabledes } = usePurchaseOrderLayout();
-  const { dragcart, setDragcart } = useGoodReceivedLayout();
-  const { dragIsopen, setDragIsopen } = usePurchaseReturnLayout();
-  const { dragIsopenes, setDragIsopenes } = useStockTransferLayout();
-  const { dragIsopened, setDragIsopened } = useStockTransferAllLayout();
-  const { dragIsopenies, setDragIsopenies } = StockTransferHistoryLayout();
-  const { Opendrag, setOpenDrag } = useUserAllLayout();
-  const { Opendrages, setOpenDrages } = useUserRolesLayout();
-  const { Opendraged, setOpenDraged } = useSupplierLayout();
-  const { Showdrag, setShowDrag } = useReportLayout(); 
+  const [activeMenu, setActiveMenu] = useState("General");
+
+  const [settings, setSettings] = useState({
+    barcode: true,
+    lowStock: true,
+    saleSound: true,
+    autoPrint: false,
+    confirmDelete: true,
+    compactMode: false,
+  });
+
+  const [theme, setTheme] = useState("Light");
+  const [sidebarStyle, setSidebarStyle] = useState("Light");
+  const [primaryColor, setPrimaryColor] = useState("purple");
+
+  const menus = [
+    {
+      name: "General",
+      description: "General Settings",
+      icon: SettingsIcon,
+    },
+    {
+      name: "Store Settings",
+      description: "Manage store information",
+      icon: Store,
+    },
+    {
+      name: "Tax Settings",
+      description: "Configure tax rates",
+      icon: FileText,
+    },
+    {
+      name: "Payment Methods",
+      description: "Manage payment options",
+      icon: CreditCard,
+    },
+    {
+      name: "Receipt Settings",
+      description: "Customize receipt template",
+      icon: Receipt,
+    },
+    {
+      name: "Users & Permissions",
+      description: "Manage user roles",
+      icon: Users,
+    },
+    {
+      name: "Notifications",
+      description: "Email and system alerts",
+      icon: Bell,
+    },
+    {
+      name: "Backup & Restore",
+      description: "Backup or restore data",
+      icon: History,
+    },
+    {
+      name: "Integrations",
+      description: "Third-party integrations",
+      icon: Puzzle,
+    },
+    {
+      name: "System Info",
+      description: "System information",
+      icon: Info,
+    },
+  ];
+
+  const toggleSetting = (name) => {
+    setSettings((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
+  };
+
+  const Toggle = ({ enabled, onClick }) => {
+    return (
+      <button
+        onClick={onClick}
+        type="button"
+        className={`relative h-6 w-11 rounded-full transition-all ${
+          enabled ? "bg-purple-700" : "bg-gray-200"
+        }`}
+      >
+        <span
+          className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${
+            enabled ? "left-6" : "left-1"
+          }`}
+        />
+      </button>
+    );
+  };
   return (
-    <div className="p-6">
-      <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+    <div className="min-h-screen bg-gray-50 p-5 text-gray-800">
 
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Settings className="text-blue-600" size={28} />
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[230px_1fr]">
 
-          <h1 className="text-2xl font-bold text-gray-800">
-            Settings
-          </h1>
+        {/* ================= SIDEBAR ================= */}
+        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white">
+
+          {menus.map((menu) => {
+            const Icon = menu.icon;
+            const active = activeMenu === menu.name;
+
+            return (
+              <button
+                key={menu.name}
+                onClick={() => setActiveMenu(menu.name)}
+                className={`relative flex w-full items-center gap-4 px-4 py-4 text-left transition-all ${
+                  active
+                    ? "bg-purple-50 text-purple-700"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {active && (
+                  <span className="absolute left-0 top-0 h-full w-1 bg-purple-700" />
+                )}
+
+                <Icon
+                  size={20}
+                  className={active ? "text-purple-700" : "text-gray-600"}
+                />
+
+                <div>
+                  <p className="text-sm font-semibold">
+                    {menu.name}
+                  </p>
+
+                  <p className="text-[11px] text-gray-400">
+                    {menu.description}
+                  </p>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
+        {/* ================= CONTENT ================= */}
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
 
-        {/* Dashboard Setting */}
-        <div className="flex items-center justify-between border rounded-xl p-5">
+          <GeneralSettings/>
 
-          <div className="flex items-center gap-4">
-
-            <div className="bg-blue-100 p-3 rounded-xl">
-              <Grip className="text-blue-600" />
-            </div>
-
-
-            <div>
-              <h2 className="font-semibold text-gray-800">
-                Dashboard Layout
-              </h2>
-
-              <p className="text-sm text-gray-500">
-                Enable drag & drop to rearrange dashboard cards.
-              </p>
-            </div>
-
-          </div>
-
-
-          {/* Toggle Button */}
-          <button
-            onClick={() => setDragEnabled(!dragEnabled)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragEnabled ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragEnabled ? "translate-x-7" : ""}
-              `}
+          <ApplicationSettings
+              settings={settings}
+              toggleSetting={toggleSetting}
+              Toggle={Toggle}
             />
 
-          </button>
-          <button
-            onClick={() => setDrag(!drag)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${drag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${drag ? "translate-x-7" : ""}
-              `}
+            <ThemeSettings
+              theme={theme}
+              setTheme={setTheme}
+              primaryColor={primaryColor}
+              setPrimaryColor={setPrimaryColor}
+              sidebarStyle={sidebarStyle}
+              setSidebarStyle={setSidebarStyle}
+              settings={settings}
+              toggleSetting={toggleSetting}
+              Toggle={Toggle}
             />
 
-          </button>
-          <button
-            onClick={() => setDrage(!drage)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${drag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${drage ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() => setDrages(!drages)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${drag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${drage ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() => setDragEnablede(!dragEnablede)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${drag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${drage ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() => setDragEnabledes(!dragEnabledes)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragEnabledes ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragEnabledes ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          
-          <button
-            onClick={() => setDragcart(!dragcart)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragcart ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragcart ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-         
-
-          <button
-            onClick={() => setDragIsopen(!dragIsopen)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragIsopen ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragIsopen ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-
-          <button
-            onClick={() => setDragIsopenes(!dragIsopenes)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragIsopenes ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragIsopenes ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-
-          <button
-            onClick={() => setDragIsopened(!dragIsopened)} 
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragIsopened ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragIsopened ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() =>setDragIsopenies(!dragIsopenies)} 
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${dragIsopenies ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${dragIsopenies ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() =>setOpenDrag(!Opendrag)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${Opendrag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${Opendrag ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() =>setOpenDrag(!Opendrag)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${Opendrag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${Opendrag ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() =>setOpenDrages(!Opendrages)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${Opendrages ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${Opendrages ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() =>setOpenDraged(!Opendraged)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${Opendraged ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${Opendraged ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-          <button
-            onClick={() =>setShowDrag(!Showdrag)}
-            className={`
-              relative cursor-pointer w-14 h-7 rounded-full transition
-              ${Showdrag ? "bg-blue-600" : "bg-gray-300"}
-            `}
-          >
-
-            <span
-              className={`
-                absolute top-1 left-1
-                w-5 h-5 bg-white rounded-full
-                transition-transform
-                ${Showdrag ? "translate-x-7" : ""}
-              `}
-            />
-
-          </button>
-        </div>
-
-
-        {/* Status */}
-        <div className="mt-6 text-sm text-gray-600">
-
-          Status :
-
-          <span
-            className={`
-              ml-2 font-semibold
-              ${
-                dragEnabled
-                  ? "text-green-600"
-                  : "text-red-600"
-              }
-            `}
-          >
-            {dragEnabled ? "Enabled" : "Disabled"}
-          </span>
+          <BackupData/>
 
         </div>
-
-
       </div>
+
+     <SystemInformation/>
+
     </div>
   );
 }

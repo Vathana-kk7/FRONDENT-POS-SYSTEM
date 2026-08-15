@@ -17,6 +17,7 @@ import {
   CreditCard,
   RotateCcw,
   HousePlus,
+  ChartColumnIncreasing,
 } from "lucide-react";
 
 import PromoCard from "./PromoCard";
@@ -54,10 +55,16 @@ function Sidebar() {
       icon: LayoutDashboard,
     },
     {
+      label: "Brand",
+      path: "/brand",
+      icon: Package,
+    },
+    {
       label: "Products",
       path: "/product",
       icon: Package,
     },
+    
     {
       label: "Categories",
       path: "/category",
@@ -79,7 +86,7 @@ function Sidebar() {
     {
       label: "Reports",
       path: "/reports",
-      icon: FileText,
+      icon: ChartColumnIncreasing,
     },
     {
       label: "Settings",
