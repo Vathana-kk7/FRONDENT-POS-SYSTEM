@@ -1,12 +1,13 @@
 import { AlertTriangle, Trash2, X } from "lucide-react";
 
 function DeleteModal({
-  item,
-  title = "Delete Item?",
-  message = "Are you sure you want to delete this item? This action cannot be undone.",
-  onClose,
-  onConfirm,
-}) {
+    isDeleting,
+    item,
+    title = "Delete Item?",
+    message = "Are you sure you want to delete this item? This action cannot be undone.",
+    onClose,
+    onConfirm,
+  }) {
   if (!item) return null;
 
   return (
@@ -136,7 +137,7 @@ function DeleteModal({
             "
           >
             <Trash2 size={18} />
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
 
         </div>

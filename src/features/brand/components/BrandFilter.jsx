@@ -1,7 +1,27 @@
 import { Filter, Search, X } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 
-function BrandFilter() {
+function BrandFilter({ onFilter }) {
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleFilter = () => {
+    onFilter({
+      search,
+      status,
+    });
+  };
+
+  const handleClear = () => {
+    setSearch("");
+    setStatus("");
+
+    onFilter({
+      search: "",
+      status: "",
+    });
+  };
+
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center gap-4">
@@ -15,6 +35,13 @@ function BrandFilter() {
 
           <input
             type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleFilter();
+              }
+            }}
             placeholder="Search brand..."
             className="
               h-10 w-full rounded-lg
@@ -32,7 +59,8 @@ function BrandFilter() {
 
         {/* Status */}
         <select
-          name="status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
           className="
             h-10 min-w-[160px]
             rounded-lg border border-gray-200
@@ -50,9 +78,10 @@ function BrandFilter() {
           <option value="inactive">Inactive</option>
         </select>
 
-        {/* Filter Button */}
+        {/* Filter */}
         <button
           type="button"
+          onClick={handleFilter}
           className="
             flex h-10 items-center gap-2
             rounded-lg border border-gray-200
@@ -73,6 +102,7 @@ function BrandFilter() {
         {/* Clear */}
         <button
           type="button"
+          onClick={handleClear}
           className="
             flex h-10 items-center gap-2
             rounded-lg px-4

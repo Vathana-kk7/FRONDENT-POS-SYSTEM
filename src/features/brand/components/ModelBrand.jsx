@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-function ModelBrand({ onClose,createBrand,isPending }) {
+function ModelBrand({ onClose,createBrand,isPending, editBrand, editingBrand = null, }) {
   const [formData, setFormData] = useState({
     name: "",
     status: "active",
@@ -15,23 +15,47 @@ function ModelBrand({ onClose,createBrand,isPending }) {
       [name]: value,
     }));
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // call Laravel API here
-    try {
-        await createBrand(formData);
-      //clear Form
+  useEffect(() => {
+    if (editingBrand) {
       setFormData({
-        name:"",
-        status:""
+        name: editingBrand.name || "",
+        status: editingBrand.status || "active",
       });
-    } catch (error) {
-      console.error(error);
+    } else {
+      setFormData({
+        name: "",
+        status: "active",
+      });
+    }
+  }, [editingBrand]);
+
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    if (editingBrand) {
+      await editBrand({
+        id: editingBrand.id,
+        data: {
+          name: formData.name,
+          status: formData.status,
+        },
+      });
+    } else {
+      await createBrand({
+        name: formData.name,
+        status: formData.status,
+      });
     }
 
     onClose();
-  };
+  } catch (error) {
+    console.error(
+      "Brand submit failed:",
+      error.response?.data || error
+    );
+  }
+};
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
@@ -53,8 +77,8 @@ function ModelBrand({ onClose,createBrand,isPending }) {
             type="button"
             onClick={onClose}
             className="flex h-9 w-9 items-center justify-center rounded-lg
-                       text-gray-500 transition
-                       hover:bg-red-50 hover:text-red-600 cursor-pointer"
+            text-gray-500 transition
+            hover:bg-red-50 hover:text-red-600 cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -150,18 +174,26 @@ function ModelBrand({ onClose,createBrand,isPending }) {
             </button>
 
             <button
-            disabled={isPending}
               type="submit"
+              disabled={isPending}
               className="
                 rounded-xl bg-blue-800
                 px-6 py-2.5
                 text-sm font-semibold text-white
-                shadow-sm transition cursor-pointer
+                shadow-sm transition
                 hover:bg-blue-900
                 active:scale-95
+                disabled:cursor-not-allowed
+                disabled:opacity-50
               "
             >
-              {isPending ? "Saving..." : "Save Brand"}
+              {isPending
+                ? editingBrand
+                  ? "Updating..."
+                  : "Saving..."
+                : editingBrand
+                  ? "Update Brand"
+                  : "Save Brand"}
             </button>
 
           </div>

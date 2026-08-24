@@ -79,10 +79,8 @@ export default function Login() {
           </div>
         </div>
         <div className="w-[675px] bg-gray-50 rounded-r-[20px] p-15 shadow-lg f">
-            <div className="flex justify-center items-center mb-5">
-              <div className="border-2 text-gray-200 rounded-lg w-15 h-15 flex justify-center items-center">
-                <span className="text-black text-red-600 font-bold text-lg ">POS</span>
-              </div>
+            <div className="flex justify-center items-center mb-5 ">
+              <img src="/public/Logo_POS.png" className="object-cover w-15 h-15 border border-gray-200 shadow-lg rounded-lg" alt="" />
             </div>
             <div className="flex justify-center items-center">
               <div>

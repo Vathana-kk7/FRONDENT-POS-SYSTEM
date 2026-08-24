@@ -1,39 +1,71 @@
 import { createContext, useContext, useState } from "react";
 
-const BrandContext=createContext(null);
+const BrandContext = createContext(null);
 
-export function BrandProvider({children}){
-    const [isAddOpen,setIsOpen]=useState(false);
+export function BrandProvider({ children }) {
+  // =========================
+  // ADD MODAL
+  // =========================
+  const [isAddOpen, setIsAddOpen] = useState(false);
 
-    // openAdd
-    const openAdd=()=>{
-        setIsOpen(true);
-    }
-    //CloseAdd
-    const closeAdd=()=>{
-        setIsOpen(false);
-    }
-    return(
-        <BrandContext.Provider
-            value={{
-                isAddOpen,
-                openAdd,
+  // =========================
+  // EDIT MODAL
+  // =========================
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState(null);
 
-                closeAdd
-            }}
-        >
-        {children}
-        </BrandContext.Provider>
-    )
+  // =========================
+  // ADD
+  // =========================
+  const openAdd = () => {
+    setIsAddOpen(true);
+  };
 
+  const closeAdd = () => {
+    setIsAddOpen(false);
+  };
+
+  // =========================
+  // EDIT
+  // =========================
+  const openEdit = (brand) => {
+    setSelectedBrand(brand);
+    setIsEditOpen(true);
+  };
+
+  const closeEdit = () => {
+    setIsEditOpen(false);
+    setSelectedBrand(null);
+  };
+
+  return (
+    <BrandContext.Provider
+      value={{
+        // Add
+        isAddOpen,
+        openAdd,
+        closeAdd,
+
+        // Edit
+        isEditOpen,
+        openEdit,
+        closeEdit,
+        selectedBrand,
+      }}
+    >
+      {children}
+    </BrandContext.Provider>
+  );
 }
 
-export function useBrandContext(){
-    const context=useContext(BrandContext);
-    if(!context){
-        throw new Error (
-            "useBrands must be used inside CategoryProvider"
-        );
-    }
-    return context;
+export function useBrandContext() {
+  const context = useContext(BrandContext);
+
+  if (!context) {
+    throw new Error(
+      "useBrandContext must be used inside BrandProvider"
+    );
+  }
+
+  return context;
 }

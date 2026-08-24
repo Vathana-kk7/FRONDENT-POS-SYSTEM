@@ -7,7 +7,6 @@ import BrandService from "../service/BrandService";
 
 const useCreateBrand = () => {
   const queryClient = useQueryClient();
-
   const {
     mutate,
     mutateAsync,

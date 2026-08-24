@@ -8,21 +8,30 @@ import SortableCard from '../components/SortableCard';
 import { BrandData } from '../data/BrandData';
 import BrandFilter from '../components/BrandFilter';
 import BrandTable from '../components/BrandTable';
-import createHookBrand from '../hooks/useBrand';
 import { useBrandContext } from '../../../context/BrandContext';
-import useBrand from '../hooks/useBrand';
 import ProductPagination from '../components/ProductPagination';
 import useCreateBrand from '../hooks/useCreateBrand';
 import useBrands from '../hooks/useBrand';
+import useEditBrand from '../hooks/useEditeBrand';
 
 function Brand() {
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(1);  
   const perPage = 10;
+
+const [filters, setFilters] = useState({
+  search: "",
+  status: "",
+});
     const [isImportOpen, setIsImportOpen] = useState(false);
     const {
       isAddOpen,
       openAdd,
-      closeAdd
+      closeAdd,
+      openEdit,
+      closeEdit,
+      isEditOpen,
+      selectedBrand
+      
     }=useBrandContext();
     const { dragShow } = useBrandLayout();
     const [cards, setCards] = useState(BrandData);
@@ -48,7 +57,7 @@ function Brand() {
       }
 
     //For get Brand
-     const {
+   const {
         brands,
         isLoading,
         isFetching,
@@ -60,19 +69,22 @@ function Brand() {
       } = useBrands({
         page,
         per_page: perPage,
+        search: filters.search,
+        status: filters.status,
       });
+
       //Create Brand
      const {
         createBrandAsync,
         isPending,
         isSuccess,
       } = useCreateBrand();
-      if (isSuccess) {
-          console.log("Brand created successfully");
-        }
 
-    
-
+      //Edite Brand
+      const {
+        mutateAsync: editBrand,
+        isPending: isEditing,
+      } = useEditBrand();
   return (
     <div className='px-5'>
         <div className="flex justify-between">
@@ -215,14 +227,23 @@ function Brand() {
           </div>
         </div>
       </div>
-      {isAddOpen && (
-        <ModelBrand
-          createBrand={createBrandAsync}
-          isPending={isPending}
-          onClose={closeAdd}
-        />
-      )}
+      
+        {isAddOpen && (
+          <ModelBrand
+            createBrand={createBrandAsync}
+            isPending={isPending}
+            onClose={closeAdd}
+          />
+        )}
 
+        {isEditOpen && selectedBrand && (
+          <ModelBrand
+            editingBrand={selectedBrand}
+            editBrand={editBrand}
+            isPending={isEditing}
+            onClose={closeEdit}
+          />
+        )}
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
@@ -243,26 +264,38 @@ function Brand() {
           </div>
         </SortableContext>
       </DndContext>
-      <BrandFilter/>
-      <BrandTable
-        brands={brands} 
-        
-      />
+        <BrandFilter
+          onFilter={(newFilters) => {
+            setFilters(newFilters);
+            setPage(1);
+          }}
+        />
+
+      {/* Table */}
+      {/* <BrandTable
+          openAdd={openAdd}
+          brands={brands}
+          isLoading={isLoading}
+        /> */}
+        <BrandTable
+            brands={brands}
+            isLoading={isLoading}
+            openAdd={openAdd}
+            openEdit={openEdit}
+          />
+
       <div className="flex items-center justify-between border border-gray-200 bg-gray-100 p-3">
-
-  <h1 className="font-semibold text-gray-600">
-    Showing {from} to {to} of {total} brands
-  </h1>
-
-  <ProductPagination
-    page={currentPage}
-    count={lastPage}
-    onChange={(event, value) => {
-      setPage(value);
-    }}
-  />
-
-</div>
+        <h1 className="font-semibold text-gray-600">
+          Showing {from} to {to} of {total} brands
+        </h1>
+          <ProductPagination
+            page={currentPage}
+            count={lastPage}
+            onChange={(event, value) => {
+              setPage(value);
+            }}
+          />
+      </div>
     </div>
   )
 }
