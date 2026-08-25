@@ -15,11 +15,15 @@ function BrandCart({ card }) {
           {card.value}
         </p>
         <div className="flex items-center gap-1 mt-1">
-          <ArrowUp size={16} className="text-green-500" />
-          <span className="text-sm text-green-500">
-            {card.growth} This month
-          </span>
-        </div>
+  <ArrowUp size={16} className="text-green-500" />
+
+  <span className="text-sm text-green-500">
+    {card.growth === null
+      ? "New this month"
+      : `${card.growth > 0 ? "+" : ""}${card.growth}% This month`
+    }
+  </span>
+</div>
       </div>
     </div>
   );

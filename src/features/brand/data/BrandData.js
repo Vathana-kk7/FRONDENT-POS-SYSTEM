@@ -1,4 +1,4 @@
-import { DollarSign, PackageSearch, ShoppingCart, Users } from "lucide-react";
+
 
 export const Brands = [
   {
@@ -68,37 +68,36 @@ export const Brands = [
     status: "Out of Stock",
   },
 ];
-export const BrandData = [
+import {
+  Building2,
+  CheckCircle,
+  XCircle,
+  Package,
+} from "lucide-react";
+
+export const BrandCardConfig = [
   {
-    id: 1,
-    title: "Total Products",
-    value: 1200,
-    growth: "8.5%",
+    id: "total",
+    title: "Total Brands",
     color: "bg-blue-600",
-    icon: PackageSearch,
+    icon: Building2,
   },
   {
-    id: 2,
-    title: "Low Stock",
-    value: 356,
-    growth: "5.2%",
+    id: "active",
+    title: "Active Brands",
     color: "bg-green-600",
-    icon: ShoppingCart,
+    icon: CheckCircle,
   },
   {
-    id: 3,
-    title: "Out of Stock",
-    value: 90,
-    growth: "12%",
+    id: "inactive",
+    title: "Inactive Brands",
+    color: "bg-red-500",
+    icon: XCircle,
+  },
+  {
+    id: "with_products",
+    title: "Brands with Products",
     color: "bg-purple-600",
-    icon: Users,
-  },
-  {
-    id: 4,
-    title: "Total Value",
-    value: "$25,000",
-    growth: "15%",
-    color: "bg-orange-500",
-    icon: DollarSign,
+    icon: Package,
   },
 ];

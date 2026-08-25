@@ -75,7 +75,7 @@ function Product() {
         <div className="flex gap-3">
          <button type="button" onClick={openAdd} className="flex h-11 w-40 items-center justify-center  rounded-xl bg-blue-800 text-white shadow-lg  transition hover:bg-blue-900 cursor-pointer">
             <Plus size={20} />
-            <span className="ms-2">ModelBrand
+            <span className="ms-2">
               Add Product
             </span>
           </button>

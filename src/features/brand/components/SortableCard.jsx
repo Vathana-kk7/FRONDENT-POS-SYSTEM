@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import BrandCart from "./BrandCart";
 
-export default function SortableCard({ card, disabled }) {
+export default function SortableCard({ card, disabled,isLoading  }) {
   const {
     attributes,
     listeners,
@@ -26,7 +26,10 @@ export default function SortableCard({ card, disabled }) {
       {...attributes}
       {...listeners}
     >
-      <BrandCart card={card} />
+      <BrandCart 
+      card={card}
+      isLoading={isLoading}
+      />
     </div>
   );
 }

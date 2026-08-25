@@ -7,6 +7,7 @@ import BrandService from "../service/BrandService";
 
 const useCreateBrand = () => {
   const queryClient = useQueryClient();
+
   const {
     mutate,
     mutateAsync,
@@ -18,8 +19,15 @@ const useCreateBrand = () => {
     mutationFn: (data) => BrandService.create(data),
 
     onSuccess: async () => {
+
+      // Update Brand Table
       await queryClient.invalidateQueries({
         queryKey: ["brands"],
+      });
+
+      // Update Brand Cards
+      await queryClient.invalidateQueries({
+        queryKey: ["brand-stats"],
       });
     },
   });

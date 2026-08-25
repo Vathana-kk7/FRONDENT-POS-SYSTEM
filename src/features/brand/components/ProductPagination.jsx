@@ -13,6 +13,7 @@ export default function ProductPagination({
         onChange={onChange}
         shape="rounded"
         color="primary"
+        
       />
     </div>
   );

@@ -1,11 +1,11 @@
 import { Download, File, FileSpreadsheet, FileText, Plus } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ModelBrand from '../components/ModelBrand';
 import { useBrandLayout } from '../../../context/BrandLayoutContext';
 import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import SortableCard from '../components/SortableCard';
-import { BrandData } from '../data/BrandData';
+import { BrandCardConfig } from '../data/BrandData';
 import BrandFilter from '../components/BrandFilter';
 import BrandTable from '../components/BrandTable';
 import { useBrandContext } from '../../../context/BrandContext';
@@ -13,6 +13,7 @@ import ProductPagination from '../components/ProductPagination';
 import useCreateBrand from '../hooks/useCreateBrand';
 import useBrands from '../hooks/useBrand';
 import useEditBrand from '../hooks/useEditeBrand';
+import useBrandStats from '../hooks/useBrandStats';
 
 function Brand() {
   const [page, setPage] = useState(1);  
@@ -34,7 +35,7 @@ const [filters, setFilters] = useState({
       
     }=useBrandContext();
     const { dragShow } = useBrandLayout();
-    const [cards, setCards] = useState(BrandData);
+    const [cards, setCards] = useState(BrandCardConfig );
 
     function handleDragEnd(event) {
     
@@ -57,7 +58,7 @@ const [filters, setFilters] = useState({
       }
 
     //For get Brand
-   const {
+    const {
         brands,
         isLoading,
         isFetching,
@@ -71,7 +72,7 @@ const [filters, setFilters] = useState({
         per_page: perPage,
         search: filters.search,
         status: filters.status,
-      });
+    });
 
       //Create Brand
      const {
@@ -85,6 +86,32 @@ const [filters, setFilters] = useState({
         mutateAsync: editBrand,
         isPending: isEditing,
       } = useEditBrand();
+
+      //Cart data
+      const {
+        stats,
+        isLoading: isStatsLoading,
+      } = useBrandStats();
+
+      // useEffect(() => {
+      //     setCards((prevCards) =>
+      //         prevCards.map((card) => ({
+      //             ...card,
+      //             value: stats[card.id] ?? 0,
+      //             growth: stats.growth ?? 0,
+      //         }))
+      //     );
+      // }, [stats]);
+      useEffect(() => {
+    setCards((prevCards) =>
+        prevCards.map((card) => ({
+            ...card,
+            value: stats[card.id] ?? 0,
+            growth: stats.growth,
+        }))
+    );
+}, [stats]);
+
   return (
     <div className='px-5'>
         <div className="flex justify-between">
@@ -249,7 +276,7 @@ const [filters, setFilters] = useState({
         onDragEnd={handleDragEnd}
       >
         <SortableContext
-          items={cards}
+          items={cards.map((card) => card.id)}
           strategy={rectSortingStrategy}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-5">
@@ -259,11 +286,14 @@ const [filters, setFilters] = useState({
                 key={card.id}
                 card={card}
                 disabled={!dragShow}
+                isLoading={isStatsLoading}
               />
             ))}
           </div>
         </SortableContext>
       </DndContext>
+      
+      {/* Filter */}
         <BrandFilter
           onFilter={(newFilters) => {
             setFilters(newFilters);

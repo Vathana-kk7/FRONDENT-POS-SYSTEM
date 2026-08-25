@@ -30,9 +30,12 @@ import ApplicationSettings from "../components/ApplicationSettings";
 import ThemeSettings from "../components/ThemeSettings";
 import BackupData from "../components/BackupData";
 import SystemInformation from "../components/SystemInformation";
+import { useProductLayout } from "../../../context/ProductLayoutContext";
 
 function Setting() {
   const [activeMenu, setActiveMenu] = useState("General");
+  const { dragEnabled, setDragEnabled } = useProductLayout();
+
 
   const [settings, setSettings] = useState({
     barcode: true,
@@ -198,7 +201,25 @@ function Setting() {
       </div>
 
      <SystemInformation/>
+          <h1>------------------------------</h1>
+           <button
+            onClick={() => setDragEnabled(!dragEnabled)}
+            className={`
+              relative cursor-pointer w-14 h-7 rounded-full transition
+              ${dragEnabled ? "bg-blue-600" : "bg-gray-300"}
+            `}
+          >
 
+            <span
+              className={`
+                absolute top-1 left-1
+                w-5 h-5 bg-white rounded-full
+                transition-transform
+                ${dragEnabled ? "translate-x-7" : ""}
+              `}
+            />
+
+          </button>
     </div>
   );
 }
