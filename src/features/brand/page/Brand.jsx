@@ -14,6 +14,8 @@ import useCreateBrand from '../hooks/useCreateBrand';
 import useBrands from '../hooks/useBrand';
 import useEditBrand from '../hooks/useEditeBrand';
 import useBrandStats from '../hooks/useBrandStats';
+import ImportBrand from '../components/ImportBrand';
+import ExportBrand from '../components/ExportBrand';
 
 function Brand() {
   const [page, setPage] = useState(1);  
@@ -23,7 +25,7 @@ const [filters, setFilters] = useState({
   search: "",
   status: "",
 });
-    const [isImportOpen, setIsImportOpen] = useState(false);
+    
     const {
       isAddOpen,
       openAdd,
@@ -115,145 +117,24 @@ const [filters, setFilters] = useState({
   return (
     <div className='px-5'>
         <div className="flex justify-between">
-        <h1 className="text-xl font-medium">
-          Brands
-        </h1>
-        <div className="flex gap-3">
-            
-         <button type="button" onClick={openAdd} className="flex h-11 w-40 items-center justify-center  rounded-xl bg-blue-800 text-white shadow-lg  transition hover:bg-blue-900 cursor-pointer">
-            <Plus size={20} />
-            <span className="ms-2">
-              Add Brand
-            </span>
-          </button>
-          <div className="relative">
-
-            {/* Import Button */}
-            <button
-              type="button"
-              onClick={() => setIsImportOpen(!isImportOpen)}
-              className="
-                bg-white
-                flex
-                justify-center
-                items-center
-                text-black
-                w-40
-                h-11
-                rounded-xl
-                shadow-lg
-                border
-                border-gray-200
-                cursor-pointer
-                hover:bg-gray-50
-                transition
-              "
-            >
-              <Download size={20} />
-
+          <h1 className="text-xl font-medium">
+            Brands
+          </h1>
+          <div className="flex gap-3">
+              
+          <button type="button" onClick={openAdd} className="flex h-11 w-40 items-center justify-center  rounded-xl bg-blue-800 text-white shadow-lg  transition hover:bg-blue-900 cursor-pointer">
+              <Plus size={20} />
               <span className="ms-2">
-                Import
+                Add Brand
               </span>
             </button>
-            {/* Dropdown */}
-            {isImportOpen && (
-              <div
-                className="
-                  absolute
-                  right-0
-                  top-14
-                  z-50
-                  w-48
-                  bg-white
-                  border
-                  border-gray-200
-                  rounded-xl
-                  shadow-xl
-                  p-2
+            <div className="relative">
 
-                  animate-[dropdown_0.2s_ease-out]
-                "
-              >
-
-                {/* PDF */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-red-50
-                    transition
-                  "
-                >
-                  <FileText
-                    size={20}
-                    className="text-red-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    PDF File
-                  </span>
-                </div>
-
-
-                {/* DOC */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-blue-50
-                    transition
-                  "
-                >
-                  <File
-                    size={20}
-                    className="text-blue-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    DOC File
-                  </span>
-                </div>
-
-
-                {/* Excel */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-green-50
-                    transition
-                  "
-                >
-                  <FileSpreadsheet
-                    size={20}
-                    className="text-green-600"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    Excel File
-                  </span>
-                </div>
-
-              </div>
-            )}
+            <ImportBrand/>
+            </div>
+            <ExportBrand filters={filters} brandData={brands} />
           </div>
         </div>
-      </div>
       
         {isAddOpen && (
           <ModelBrand

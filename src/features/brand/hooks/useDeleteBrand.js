@@ -11,6 +11,7 @@ const useDeleteBrand = () => {
       queryClient.invalidateQueries({
         queryKey: ["brands"],
       });
+      queryClient.invalidateQueries(['brandStats']);
     },
 
     onError: (error) => {
