@@ -15,7 +15,7 @@ const useEditBrand = () => {
 
       //Update Brand-State 
       queryClient.invalidateQueries({
-        queryKey:["brandStats"],
+        queryKey: ["brand-stats"],
       });
     },
 
