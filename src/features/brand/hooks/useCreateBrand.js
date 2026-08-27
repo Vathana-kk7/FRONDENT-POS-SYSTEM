@@ -1,10 +1,6 @@
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import BrandService from "../service/BrandService";
-import { showToast } from "../../../utils/toast"; // ✅ 1. Uncomment line នេះ
+import { showToast } from "../../../utils/toast";
 
 const useCreateBrand = () => {
   const queryClient = useQueryClient();
@@ -19,33 +15,36 @@ const useCreateBrand = () => {
   } = useMutation({
     mutationFn: (data) => BrandService.create(data),
 
-    // ✅ 2. ចាប់យក data ពី response របស់ API
-    onSuccess: async (data) => {
-      // Update Brand Table
-      await queryClient.invalidateQueries({
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({
         queryKey: ["brands"],
       });
 
-      // Update Brand Cards
-      await queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["brand-stats"],
       });
 
-      // ✅ 3. បង្ហាញ Toast Slide ពីស្តាំទៅឆ្វេង ពេលបង្កើត Brand ជោគជ័យ
-      showToast(data?.message || 'បង្កើត Brand ថ្មីបានជោគជ័យ!', 'success');
+      const successMessage =
+        res?.data?.message ||
+        res?.message ||
+        "បង្កើត Brand ថ្មីបានជោគជ័យ!";
+
+      showToast(successMessage, "success");
     },
 
-    // ✅ 4. បន្ថែម onError ដើម្បីបង្ហាញ Toast ពេលមានបញ្ហា/Error
-    onError: (error) => {
-      const errorMessage = error?.response?.data?.message || 'មានបញ្ហាក្នុងការបង្កើត Brand!';
-      showToast(errorMessage, 'error');
+    onError: (err) => {
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.message ||
+        "មានបញ្ហាក្នុងការបង្កើត Brand!";
+
+      showToast(errorMessage, "error");
     },
   });
 
   return {
     createBrand: mutate,
     createBrandAsync: mutateAsync,
-
     isPending,
     isSuccess,
     isError,

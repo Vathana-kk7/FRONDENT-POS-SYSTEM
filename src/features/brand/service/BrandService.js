@@ -11,7 +11,6 @@ const BrandService = {
       const response = await privateApi.get("/brand/stats");
       return response.data;
     } catch (error) {
-      console.log("Brand Stats Error:", error.response?.data);
       throw error;
     }
   },
@@ -44,17 +43,17 @@ const BrandService = {
     return response.data;
   },
 
-  async exportBrands(type = "excel", filters = {}) {
+ async exportBrands(type = "excel", filters = {}) {
     const response = await privateApi.get(
-      `/brand/export/${type}`,
-      {
-        params: filters,
-        responseType: "blob",
-      }
+        `/brand/export/${type}`,
+        {
+            params: filters,
+            responseType: "blob",
+        }
     );
 
     return response;
-  },
+},
 
   // Alias so calling BrandService.export(...) also works
   export(type, filters) {

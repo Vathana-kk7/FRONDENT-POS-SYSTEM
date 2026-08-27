@@ -1,26 +1,47 @@
 import { useQuery } from "@tanstack/react-query";
 import BrandService from "../service/BrandService";
 
-const useBrands = (params = {}) => {
+const useBrands = ({
+  page = 1,
+  per_page = 10,
+  search = "",
+  status = "",
+} = {}) => {
+
+  const queryKey = [
+    "brands",
+    page,
+    per_page,
+    search,
+    status,
+  ];
+
   const query = useQuery({
-    queryKey: ["brands", params],
+    queryKey,
 
-    queryFn: () => BrandService.getAll(params),
+    queryFn: () =>
+      BrandService.getAll({
+        page,
+        per_page,
+        search,
+        status,
+      }),
 
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
 
-    placeholderData: (previousData) => previousData,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 
   const pagination = query.data?.data;
 
+  const brands = pagination?.data ?? [];
+
   return {
     ...query,
 
-    // Brands array
-    brands: pagination?.data ?? [],
+    brands,
 
-    // Pagination
     currentPage: pagination?.current_page ?? 1,
     lastPage: pagination?.last_page ?? 1,
     total: pagination?.total ?? 0,

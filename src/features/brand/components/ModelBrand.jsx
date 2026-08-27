@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 function ModelBrand({ onClose,createBrand,isPending, editBrand, editingBrand = null, }) {
   const [formData, setFormData] = useState({
     name: "",
-    status: "active",
+    status: "",
   });
 
   const handleChange = (e) => {
@@ -15,6 +15,8 @@ function ModelBrand({ onClose,createBrand,isPending, editBrand, editingBrand = n
       [name]: value,
     }));
   };
+
+  //set data to input
   useEffect(() => {
     if (editingBrand) {
       setFormData({

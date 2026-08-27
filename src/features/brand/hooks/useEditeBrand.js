@@ -8,8 +8,14 @@ const useEditBrand = () => {
     mutationFn: ({ id, data }) => BrandService.update(id, data),
 
     onSuccess: () => {
+      //Update Brand Table
       queryClient.invalidateQueries({
         queryKey: ["brands"],
+      });
+
+      //Update Brand-State 
+      queryClient.invalidateQueries({
+        queryKey:["brandStats"],
       });
     },
 
