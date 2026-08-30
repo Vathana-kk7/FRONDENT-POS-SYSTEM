@@ -1,37 +1,29 @@
-import { DollarSign, FolderTree, PackageSearch, ShoppingCart, SquareArrowOutDownRight, SquareArrowUpRight, Users } from "lucide-react";
+import { Building2, CheckCircle, DollarSign, FolderTree, Package, PackageSearch, ShoppingCart, SquareArrowOutDownRight, SquareArrowUpRight, Users, XCircle } from "lucide-react";
 
-export const CategoryCards = [
+export const CategoryCardConfig = [
   {
-    id: 1,
-    title: "Total Categories",
-    value: 1200,
-    growth: "8.5%",
+    id: "total",
+    title: "Total Brands",
     color: "bg-blue-600",
-    icon: FolderTree,
+    icon: Building2,
   },
   {
-    id: 2,
-    title: "Active Categories",
-    value: 356,
-    growth: "5.2%",
+    id: "active",
+    title: "Active Brands",
     color: "bg-green-600",
-    icon: SquareArrowUpRight,
+    icon: CheckCircle,
   },
   {
-    id: 3,
-    title: "Inacive Categories",
-    value: 90,
-    growth: "12%",
+    id: "inactive",
+    title: "Inactive Brands",
+    color: "bg-red-500",
+    icon: XCircle,
+  },
+  {
+    id: "with_products",
+    title: "Brands with Products",
     color: "bg-purple-600",
-    icon: SquareArrowOutDownRight,
-  },
-  {
-    id: 4,
-    title: "Total Products",
-    value: "$25,000",
-    growth: "15%",
-    color: "bg-orange-500",
-    icon: DollarSign,
+    icon: Package,
   },
 ];
 export const category = [

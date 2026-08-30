@@ -5,17 +5,28 @@ export default function useDeleteCategory() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    // កែត្រង់នេះ៖ ទទួល id ដោយផ្ទាល់
     mutationFn: async (id) => {
       return await CategoryService.delete(id);
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["category"] });
+    onSuccess: async () => {
+      // 1. Invalidate Category Table Queries (រួមទាំង pagination/search)
+      await queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === "category" || query.queryKey[0] === "categories",
+      });
+
+      // 2. Invalidate Category Stats
+      await queryClient.invalidateQueries({
+        queryKey: ["categoriesState"],
+      });
     },
 
     onError: (error) => {
-      console.error("Category delete failed:", error.response?.data || error.message);
+      console.error(
+        "Category delete failed:",
+        error.response?.data || error.message
+      );
     },
   });
 }

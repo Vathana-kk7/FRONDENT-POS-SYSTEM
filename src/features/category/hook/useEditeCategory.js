@@ -12,8 +12,9 @@ export default function useEditCategory() {
 
     // ដំណាក់កាលជោគជ័យ
     onSuccess: (data) => {
-      // Refresh រាល់ Query ទាំងឡាយណាដែលមាន Key "category" (ធ្វើឲ្យ Table ទាញយកទិន្នន័យថ្មី)
-      queryClient.invalidateQueries({ queryKey: ["category"] });
+      queryClient.invalidateQueries({
+        queryKey: ["categoriesState"],
+      });
     },
 
     // ដំណាក់កាលមាន Error

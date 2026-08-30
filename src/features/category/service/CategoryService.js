@@ -3,9 +3,13 @@ import { privateApi } from "../../../services/api";
 const CategoryService = {
   // 1. Get All Categories
   async getAll(params = {}) {
-    const response = await privateApi.get("/category", { params });
-    return response.data;
-  },
+  // លុប key ណាដែលមាន value ទទេស្អាតចេញ
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+  );
+  const response = await privateApi.get("/category", { params: cleanParams });
+  return response.data;
+},
 
   // 2. Get Single Category Details
   async getById(id) {
@@ -31,6 +35,27 @@ const CategoryService = {
     const response = await privateApi.delete(`/category/${id}`);
     return response.data;
   },
+  // 6. Import Category (កែសម្រួលបន្ថែម formData)
+  async importCategory(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await privateApi.post("/category/import", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+  async state() {
+  try {
+    // កែពី /categories/state ទៅ /category/state
+    const response = await privateApi.get("/category/state"); 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
 };
 
 export default CategoryService;

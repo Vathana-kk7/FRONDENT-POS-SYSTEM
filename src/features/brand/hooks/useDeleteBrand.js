@@ -7,11 +7,12 @@ const useDeleteBrand = () => {
   return useMutation({
     mutationFn: (id) => BrandService.delete(id),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["brands"],
-      });
-      queryClient.invalidateQueries(['brandStats']);
+    onSuccess: async () => {
+      // ប្រើ await ដើម្បីប្រាកដថា Refetch ចប់សព្វគ្រប់
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["brands"] }),
+        queryClient.invalidateQueries({ queryKey: ["brand-stats"] }),
+      ]);
     },
 
     onError: (error) => {

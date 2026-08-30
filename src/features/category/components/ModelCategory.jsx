@@ -31,7 +31,7 @@ function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,
     }else{
       reset({
         name:"",
-        status:"",
+        status:"active",
         description:""
       });
     }
@@ -111,7 +111,6 @@ function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,
                 Status
                 <span className="ml-1 text-red-600">*</span>
               </label>
-
               <select
                 {...register("status")}
                 className={`mt-1 w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-800 outline-none transition cursor-pointer ${
@@ -123,6 +122,8 @@ function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select>
+
+
               {errors.status && (
                 <p className="mt-1 text-sm text-red-600">
                   {errors.status.message}

@@ -18,7 +18,6 @@ const useBrands = ({
 
   const query = useQuery({
     queryKey,
-
     queryFn: () =>
       BrandService.getAll({
         page,
@@ -26,22 +25,15 @@ const useBrands = ({
         search,
         status,
       }),
-
-    staleTime: 0,
-
-    refetchOnMount: true,
-    refetchOnWindowFocus: false,
+    // refetchOnMount និង staleTime: 0 ជា Default ស្រាប់ហើយ មិនបាច់ដាក់ក៏បាន
   });
 
   const pagination = query.data?.data;
-
   const brands = pagination?.data ?? [];
 
   return {
     ...query,
-
     brands,
-
     currentPage: pagination?.current_page ?? 1,
     lastPage: pagination?.last_page ?? 1,
     total: pagination?.total ?? 0,

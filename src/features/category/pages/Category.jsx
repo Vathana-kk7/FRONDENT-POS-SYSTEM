@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import CategoryCart from "../components/CategoryCart";
 import CategoryFilter from "../components/CategoryFilter";
@@ -6,7 +6,7 @@ import CategoryTable from "../components/CategoryTable";
 import EditeCategory from "../components/EditeCategory";
 import ModelCategory from "../components/ModelCategory";
 
-import { Categorydata } from "../data/Categorydata";
+import { CategoryCardConfig, Categorydata } from "../data/Categorydata";
 
 import { useCategory } from "../../../context/CategoryContext";
 import { useCategoryLayout } from "../../../context/CategoryLayoutContext";
@@ -37,6 +37,9 @@ import useGetAllCategory from "../hook/useGetAllCategory";
 import useEditCategory from "../hook/useEditeCategory";
 import useCreateCategory from "../hook/useCreateCategory";
 import useDeleteCategory from "../hook/useDeleteCategory";
+import useCategoryState from "../hook/useCategoryState";
+import ImportCategory from "../components/ImportCategory";
+import ExportCategory from "../components/ExportCategory";
 
 
 function Category() {
@@ -51,7 +54,7 @@ function Category() {
   // Cards
   // ==============================
 
-  const [cards, setCards] = useState(Categorydata);
+    const [orderedCards, setOrderedCards] = useState(CategoryCardConfig);
 
   // ==============================
   // Import Dropdown
@@ -174,6 +177,22 @@ function Category() {
     },
   });
 };
+ /*
+  |--------------------------------------------------------------------------
+  | Merge Ordered Cards + Stats
+  |--------------------------------------------------------------------------
+  */
+ const {
+    stats,
+    isLoading: isStatsLoading,
+  } = useCategoryState();
+  const displayCards = useMemo(() => {
+    return orderedCards.map((card) => ({
+      ...card,
+      value: stats?.[card.id] ?? 0,
+      growth: stats?.growth ?? null,
+    }));
+  }, [orderedCards, stats]);
   return (
     <div className="px-5">
 
@@ -210,156 +229,17 @@ function Category() {
               cursor-pointer
             "
           >
-
             <Plus size={20} />
-
             <span className="ms-2">
               Add Category
             </span>
-
           </button>
-
-
           {/* Import */}
-
           <div className="relative">
-
-            <button
-              type="button"
-              onClick={() =>
-                setIsImportOpen(!isImportOpen)
-              }
-              className="
-                bg-white
-                flex
-                justify-center
-                items-center
-                text-black
-                w-40
-                h-11
-                rounded-xl
-                shadow-lg
-                border
-                border-gray-200
-                cursor-pointer
-                hover:bg-gray-50
-                transition
-              "
-            >
-
-              <Download size={20} />
-
-              <span className="ms-2">
-                Import
-              </span>
-
-            </button>
-
-
-            {/* Import Dropdown */}
-
-            {isImportOpen && (
-
-              <div
-                className="
-                  absolute
-                  right-0
-                  top-14
-                  z-50
-                  w-48
-                  bg-white
-                  border
-                  border-gray-200
-                  rounded-xl
-                  shadow-xl
-                  p-2
-                "
-              >
-
-                {/* PDF */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-red-50
-                  "
-                >
-
-                  <FileText
-                    size={20}
-                    className="text-red-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    PDF File
-                  </span>
-
-                </div>
-
-
-                {/* DOC */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-blue-50
-                  "
-                >
-
-                  <File
-                    size={20}
-                    className="text-blue-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    DOC File
-                  </span>
-
-                </div>
-
-
-                {/* Excel */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-green-50
-                  "
-                >
-
-                  <FileSpreadsheet
-                    size={20}
-                    className="text-green-600"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    Excel File
-                  </span>
-
-                </div>
-
-              </div>
-
-            )}
-
+            <ImportCategory />
+          </div>
+          <div>
+            <ExportCategory/>
           </div>
 
         </div>
@@ -370,42 +250,33 @@ function Category() {
       {/* ================================= */}
       {/* Category Cards */}
       {/* ================================= */}
-
+      {/* handleDragEnd */}
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-
         <SortableContext
-          items={cards}
+          items={displayCards.map((card) => card.id)}
           strategy={rectSortingStrategy}
         >
-
-          <div
-            className="
-              grid
-              grid-cols-1
-              md:grid-cols-2
-              xl:grid-cols-4
-              gap-5
-              mt-5
-            "
-          >
-
-            {cards.map((card) => (
-
+          <div className="
+            grid
+            grid-cols-1
+            md:grid-cols-2
+            xl:grid-cols-4
+            gap-6
+            mt-5
+          ">
+            {displayCards.map((card) => (
               <SortableCard
                 key={card.id}
                 card={card}
                 disabled={!drag}
+                isLoading={isStatsLoading}
               />
-
             ))}
-
           </div>
-
         </SortableContext>
-
       </DndContext>
 
 

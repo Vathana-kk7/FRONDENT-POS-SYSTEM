@@ -10,6 +10,7 @@ export default function useCreateCategory(){
         onSuccess: ()=>{
             queryClient.invalidateQueries({
                 queryKey:["category"],
+                queryKey:["categoriesState"],
             });
         }
     })
