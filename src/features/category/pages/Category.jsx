@@ -33,6 +33,10 @@ import {
 
 import SortableCard from "../components/SortableCard";
 import CategoryPagination from "../components/CategoryPagination";
+import useGetAllCategory from "../hook/useGetAllCategory";
+import useEditCategory from "../hook/useEditeCategory";
+import useCreateCategory from "../hook/useCreateCategory";
+import useDeleteCategory from "../hook/useDeleteCategory";
 
 
 function Category() {
@@ -58,7 +62,12 @@ function Category() {
   // ==============================
   // Category Modal Context
   // ==============================
-
+  const [page, setPage] = useState(1);
+  const perPage = 10;
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+  });
   const {
     isAddOpen,
     isDeleteOpen,
@@ -77,8 +86,30 @@ function Category() {
     closeEdit,
     closeDelete,
   } = useCategory();
-
-
+ const {
+    currentPage,
+    lastPage,
+    total,from,to,isFetching,
+    query,
+    category = [],  
+    isLoading,
+    isError,
+    
+  } = useGetAllCategory({
+    page,
+    perPage,
+    search:filters.search,
+    status:filters.status,
+});
+//   console.log("Category Filters:", {
+//   page,
+//   per_page: perPage,
+//   search: filters.search,
+//   status: filters.status,
+// });
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
   // ==============================
   // Drag & Drop
   // ==============================
@@ -109,7 +140,40 @@ function Category() {
     }
   }
 
+  const handleFilter=(newFilters)=>{
+    setFilters({
+      search:newFilters?.search ?? "",
+      status:newFilters?.status ?? ""
+    });
+    // Reset pagination when filter changes
+    setPage(1);
+  }
 
+  const {
+    mutateAsync: editeCategory,
+    isPending:isEditing
+  }=useEditCategory();
+  const {
+    createCategoryAsync,
+    
+  }=useCreateCategory();
+  const {
+    mutate: deleteCategory,
+    isPending: isDeleting,
+  } = useDeleteCategory();
+  const [deleteItem, setDeleteItem] = useState(null);
+  
+ const handleConfirmDelete = () => {
+  const targetId = selectedCategory?.id ?? selectedCategory?.brand_id;
+
+  if (!targetId) return;
+
+  deleteCategory(targetId, {
+    onSuccess: () => {
+      closeDelete();
+    },
+  });
+};
   return (
     <div className="px-5">
 
@@ -349,18 +413,29 @@ function Category() {
       {/* Category Content */}
       {/* ================================= */}
 
-      <div className="w-full h-full bg-white shadow-lg mt-5">
+      <div className="w-full h-full  mt-5">
 
-        <CategoryFilter />
+        <CategoryFilter
+          onFilter={handleFilter}
+        />
 
         <CategoryTable
+        className="bg-white "
           onView={openView}
           onEdit={openEdit}
           onDelete={openDelete}
+          category={category}
+          isLoading={isLoading}
+          isError={isError}
+          query={query}
         />
         <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
-          <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
-          <CategoryPagination />
+          <h1 className="font-simbold text-gray-600">Showing {from} to {to} of {total} cateogries</h1>
+          <CategoryPagination
+            currentPage={currentPage}
+            lastPage={lastPage}
+            onChange={handlePageChange}
+          />
         </div>
       </div>
 
@@ -368,15 +443,16 @@ function Category() {
       {/* ================================= */}
       {/* Edit Category */}
       {/* ================================= */}
-
-      {isEditOpen && (
-
-        <EditeCategory
-          category={selectedCategory}
-          closeEdit={closeEdit}
-        />
-
-      )}
+      {
+        isEditOpen&& selectedCategory &&(
+          <ModelCategory 
+            onClose={closeEdit}
+            selectedCategory={selectedCategory}
+            editeCategory={editeCategory}
+            isPending={isEditing}
+          />
+        )
+      }
 
 
       {/* ================================= */}
@@ -387,6 +463,7 @@ function Category() {
 
         <ModelCategory
           onClose={closeAdd}
+          createCategory={createCategoryAsync}
         />
 
       )}
@@ -397,25 +474,16 @@ function Category() {
       {/* ================================= */}
 
       {isDeleteOpen && (
-
         <DeleteModal
           item={selectedCategory}
           title="Delete Category?"
           message="Are you sure you want to delete this category?"
+          isPending={isDeleting}
           onClose={closeDelete}
-          onConfirm={() => {
-
-            console.log(
-              "Delete category:",
-              selectedCategory
-            );
-
-            closeDelete();
-
-          }}
+          onConfirm={handleConfirmDelete}
         />
-
       )}
+      
 
     </div>
   );

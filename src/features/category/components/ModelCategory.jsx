@@ -1,123 +1,185 @@
-import { X } from "lucide-react";
-import React from "react";
+import { Loader2, X } from "lucide-react";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import useCreateCategory from "../hook/useCreateCategory";
 
-function ModelCategory({ onClose }) {
+function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,createCategory}) {
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors,isDirty },
+  } = useForm({
+    defaultValues: {
+      name: "",
+      status: "active", // កំណត់ Default Value ជា active
+      description: "",
+    },
+  });
+  const isSelecting=Boolean(selectedCategory);
+  console.log(selectedCategory);
+
+  // set data to formInput
+  useEffect(()=>{
+    if(selectedCategory){
+      reset({
+        name:selectedCategory.name || "",
+        status:selectedCategory.status || "active",
+        description:selectedCategory.description || ""
+      })
+    }else{
+      reset({
+        name:"",
+        status:"",
+        description:""
+      });
+    }
+  },[selectedCategory,reset]);
+  const onSubmit = async (data) => {
+   try {
+     if(isSelecting){
+      await editeCategory({
+        id:selectedCategory.id,
+        data,
+      })
+    }else{
+      await createCategory(data);
+    }
+    onClose();
+   } catch (error) {
+      // ទទួល Error ពី Backend API (ឧ. Brand name មានរួចហើយ)
+      if (error.response?.data?.errors) {
+        const serverErrors = error.response.data.errors;
+        Object.keys(serverErrors).forEach((field) => {
+          setError(field, { message: serverErrors[field][0] });
+        });
+      }
+   }
+  }
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="bg-white w-[1100px] h-[800px] rounded-xl shadow-xl p-6"> 
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-xl rounded-xl bg-white shadow-xl">
         {/* Header */}
-        <div className="flex justify-between items-start pb-5 border-b border-gray-200"> 
+        <div className="flex items-start justify-between border-b border-gray-200 p-6">
           <div>
-            <h1 className="text-xl font-medium">
-              Add New Product
-            </h1> 
-            <p className="text-gray-600">
-              Enter the detail of the new product
+            <h1 className="text-xl font-semibold">Add New Category</h1>
+            <p className="mt-1 text-sm text-gray-600">
+              Enter the details of the new category
             </p>
-          </div> 
+          </div>
+
           <button
             type="button"
-           onClick={onClose}
-            className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 cursor-pointer"
+            onClick={onClose}
+            className="cursor-pointer rounded-lg bg-red-600 p-2 text-white transition hover:bg-red-700"
           >
-            <X size={20}/>
-          </button> 
-        </div> 
-        {/* Body */}
-        <div className="pt-5 flex gap-x-5">
-            <div className=" w-130 h-100">
-                <div className="mb-3">
-                    <h1 className="font-semibold">Product Photos <span className="text-red-600">*</span></h1>
-                    <p className="text-gray-600 font-normal">Upload one or more photos of the product</p>
-                </div>
-                <div className="flex items-center justify-center w-full max-w-lg mx-auto">
-                    <label for="dropzone-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-indigo-300 border-dashed rounded-2xl cursor-pointer bg-slate-50/50 hover:bg-indigo-50/50 transition-colors">
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4"> 
-                        <div className="p-3 mb-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <p className="mb-1 text-sm font-semibold text-slate-700">
-                            Click to upload <span className="font-normal text-slate-500">or drag and drop</span>
-                        </p>
-                        <p className="text-xs text-slate-400">
-                            PNG, JPG, JPEG up to 5MB each
-                        </p>
-                    </div>
-                    <input id="dropzone-file" type="file" className="hidden" accept="image/png, image/jpeg, image/jpg" />
-                    </label>
-                </div>
-            </div>
-            <div className="w-150">
-                <div>
-                    <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
-                    <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                </div>
-                <div className="flex gap-5 mt-5 w-full">
-                    <div>
-                        <label className="font-semibold">SKU<span className="text-red-600">*</span></label>
-                        <input className="mt-2 w-full py-2 px-7 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                    </div>
-                    <div>
-                        <label className="font-semibold">Barcode<span className="text-red-600">*</span></label>
-                        <input className="mt-2 w-full py-2 px-7 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                    </div>
-                </div>
-                <div className="flex gap-5 mt-5 w-full">
-                    <div>
-                        <label className="font-semibold">Category<span className="text-red-600">*</span></label>
-                        <input className="mt-2 w-full py-2 px-7 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                    </div>
-                    <div>
-                        <label className="font-semibold">Status<span className="text-red-600">*</span></label>
-                        <input className="mt-2 w-full py-2 px-7 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                    </div>
-                </div>
-                <div className="flex gap-5 mt-5 w-full">
-                    <div>
-                        <label className="font-semibold">Product Type<span className="text-red-600">*</span></label>
-                        <input className="mt-2 w-full py-2 px-7 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                    </div>
-                    <div>
-                        <label className="font-semibold">Brand<span className="text-red-600">*</span></label>
-                        <input className="mt-2 w-full py-2 px-7 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-                    </div>
-                </div>
-            </div>
-        </div> 
-        <div className="flex gap-5">
-            <div>
-                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
-                <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-            </div>
-            <div>
-                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
-                <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-            </div>
-            <div>
-                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
-                <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-            </div>
-            <div>
-                <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
-                <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-            </div>
+            <X size={20} />
+          </button>
         </div>
-        <div className="mt-5">
-            <label className="font-semibold">Product Name <span className="text-red-600">*</span></label>
-            <input className="mt-2 w-full py-2 px-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-800 transition-all text-sm text-gray-800 placeholder:text-gray-400" type="text" name="" id="" placeholder="Enter product name" />
-        </div>
-        <div className="flex justify-between mt-15">
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-5 p-6">
+            {/* Category Name */}
             <div>
-                <button className="bg-blue-800 p-2 px-5 text-white cursor-pointer rounded-lg">Save New</button>
+              <label className="font-semibold">
+                Category Name
+                <span className="ml-1 text-red-600">*</span>
+              </label>
+
+              <input
+                type="text"
+                placeholder="Enter category name"
+                {...register("name")}
+                className={`mt-1 w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 ${
+                  errors.name
+                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                    : "border-gray-200 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+                }`}
+              />
+              {errors.name && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.name.message}
+                </p>
+              )}
             </div>
-            <div className="flex gap-5">
-                <div><button className="bg-while p-2 px-5 text-black border border-gray-300 cursor-pointer rounded-lg">Cancle</button></div>
-                <div><button className="bg-blue-800 p-2 px-5 text-white cursor-pointer rounded-lg">SaveProduct</button></div>
+
+            {/* Status Select */}
+            <div>
+              <label className="font-semibold">
+                Status
+                <span className="ml-1 text-red-600">*</span>
+              </label>
+
+              <select
+                {...register("status")}
+                className={`mt-1 w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-800 outline-none transition cursor-pointer ${
+                  errors.status
+                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                    : "border-gray-200 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+                }`}
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              {errors.status && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.status.message}
+                </p>
+              )}
             </div>
-        </div>
-      </div> 
+
+            {/* Description */}
+            <div>
+              <label className="font-semibold">Description</label>
+
+              <textarea
+                rows="4"
+                placeholder="Enter category description"
+                {...register("description")}
+                className={`mt-1 w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-800 outline-none transition placeholder:text-gray-400 ${
+                  errors.description
+                    ? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                    : "border-gray-200 focus:border-blue-700 focus:ring-2 focus:ring-blue-100"
+                }`}
+              />
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.description.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-4 border-t border-gray-200 p-6">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isPending}
+              className="cursor-pointer rounded-lg border border-gray-300 px-5 py-2 text-black transition hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+
+           <button
+              type="submit"
+              disabled={isPending || (isSelecting && !isDirty)} // ប្រើ isPending
+              className="inline-flex items-center gap-2 cursor-pointer rounded-lg bg-blue-800 px-5 py-2 text-sm text-white transition hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isPending && <Loader2 size={16} className="animate-spin" />}
+              {isPending
+                ? isSelecting
+                  ? "Updating..."
+                  : "Saving..."
+                : isSelecting
+                ? "Update Category"
+                : "Save Category"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

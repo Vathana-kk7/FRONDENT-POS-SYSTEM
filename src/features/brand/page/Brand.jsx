@@ -50,6 +50,7 @@ function Brand() {
   */
 
   const {
+    query,
     brands,
     isLoading,
     currentPage,
@@ -63,7 +64,12 @@ function Brand() {
     search: filters.search,
     status: filters.status,
   });
-
+//   console.log("Brand Filters:", {
+//   page,
+//   per_page: perPage,
+//   search: filters.search,
+//   status: filters.status,
+// });
   /*
   |--------------------------------------------------------------------------
   | Create Brand

@@ -1,194 +1,224 @@
-import { Delete, Edit, Eye, NotebookPen, Trash2 } from 'lucide-react'
-import React, { useState } from 'react'
-import { category } from '../../category/data/Categorydata'; 
-import { useCategory } from '../../../context/CategoryContext';
-function CategoryTable({ onView, onEdit, onDelete }) {
-  const {
-   openView,
-   openEdit,
-   openDelete,
- } = useCategory();
-   return (
-     <div className=''>
-        {/* ================= HEADER ================= */}
-       <div
-         className="
-           grid
-           grid-cols-[minmax(380px,1fr)_140px_150px_120px_100px_130px_170px]
-           items-center
-           gap-4
-           h-[50px]
-           px-4
-           bg-gray-100
-           border
-           border-gray-200
-           text-gray-900
-           font-medium
-         "
-       >
-         <div>Product</div>
-         <div>Category</div>
-         <div>SKU</div>
-         <div>Price</div>
-         <div>Stock</div>
-         <div>Status</div>
-         <div>Action</div>
-       </div>
-       {/* scroll */}
-      <div className="max-h-[450px] overflow-y-auto scrollbar-none">
-   {category.map((product) => (
-     <div
-       key={product.id}
-       className="
-         grid
-         grid-cols-[minmax(380px,1fr)_140px_150px_120px_100px_130px_170px]
-         items-center
-         gap-4
-         min-h-[80px]
-         px-6
-         
-         bg-gray-50
-         border-b
-         border-gray-200
-         hover:bg-gray-200
-         hover:scale-101
-         transition-all
-       "
-     >
-       {/* Product */}
-       <div className="flex items-center gap-5 min-w-0">
-         <img
-           src={product.image}
-           alt={product.name}
-           className="
-             w-[65px]
-             h-[55px]
-             object-cover
-             rounded-md
-             shrink-0
-           "
-         />
- 
-         <div className="min-w-0">
-           <h1 className="font-semibold text-gray-900 truncate">
-             {product.name}
-           </h1>
- 
-           <p className="text-sm text-gray-500 truncate">
-             {product.description}
-           </p>
-         </div>
-       </div>
- 
-       {/* Category */}
-       <div>
-         <span
-           className="
-             inline-flex
-             items-center
-             bg-blue-100
-             px-3
-             py-1
-             rounded-md
-             text-sm
-             font-semibold
-             text-blue-800
-           "
-         >
-           Laptop
-         </span>
-       </div>
- 
-       {/* SKU */}
-       <div className="text-gray-600 font-semibold">
-         LAP-HP-001
-       </div>
- 
-       {/* Price */}
-       <div className="text-gray-600 font-semibold">
-         $650.00
-       </div>
- 
-       {/* Stock */}
-       <div className="text-green-600 font-semibold">
-         25
-       </div>
- 
-       {/* Status */}
-       <div>
-         <span
-           className="
-             inline-flex
-             items-center
-             bg-green-100
-             px-3
-             py-1
-             rounded-md
-             text-sm
-             font-semibold
-             text-green-800
-           "
-         >
-           In Stock
-         </span>
-       </div>
- 
-       {/* Actions */}
-       <div className="flex items-center gap-3">
- 
-         {/* Edit */}
-         <button
-           type="button"
-           onClick={() => openEdit(product)}
-           className="
-             w-9
-             h-9
-             flex
-             items-center
-             justify-center
-             border
-             border-gray-300
-             rounded-lg
-             cursor-pointer
-             hover:bg-white
-             transition
-           "
-         >
-           <Edit
-             className="text-yellow-500"
-             size={18}
-           />
-         </button>
- 
-         {/* Delete */}
-         <button
-           type="button"
-           onClick={() => openDelete(product)}
-           className="
-             w-9
-             h-9
-             flex
-             items-center
-             justify-center
-             border
-             border-gray-300
-             rounded-lg
-             cursor-pointer
-             hover:bg-white
-             transition
-           "
-         >
-           <Trash2
-             className="text-red-500"
-             size={18}
-           />
-         </button>
-       </div>
-     </div>
-   ))}
- </div>
-     </div>
-   )
+import { Edit, Eye, Trash2 } from "lucide-react";
+import React from "react";
+import { useCategory } from "../../../context/CategoryContext";
+
+function CategoryTable({ category = [], isLoading = false, isError }) {
+  const { openEdit, openDelete } = useCategory();
+  // ================= SKELETON ROWS =================
+  const skeletonRows = Array.from({ length: 6 });
+
+  return (
+    <div className="mt-5 h-[503px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      {/* ================= HEADER ================= */}
+      <div
+        className="
+          grid
+          grid-cols-[minmax(250px,1fr)_minmax(250px,2fr)_120px_120px]
+          items-center
+          gap-4
+          h-[60px]
+          px-6
+          rounded-t-xl
+          bg-gray-100
+          border-b
+          border-gray-200
+          text-gray-900
+          font-medium
+        "
+      >
+        <div>Category</div>
+        <div>Description</div>
+        <div>Status</div>
+        <div>Action</div>
+      </div>
+
+      {/* ================= TABLE BODY ================= */}
+      <div className="h-[520px] max-h-[520px] overflow-y-auto scrollbar-none">
+        {/* ================= LOADING ================= */}
+        {isLoading ? (
+          skeletonRows.map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="
+                grid
+                grid-cols-[minmax(250px,1fr)_minmax(250px,2fr)_120px_120px]
+                items-center
+                gap-4
+                min-h-[75px]
+                px-6
+                bg-white
+                border-b
+                border-gray-200
+              "
+            >
+              {/* Category Name Skeleton */}
+              <div>
+                <div className="h-4 w-32 animate-pulse rounded bg-gray-200" />
+              </div>
+
+              {/* Description Skeleton */}
+              <div>
+                <div className="h-4 w-48 animate-pulse rounded bg-gray-200" />
+              </div>
+
+              {/* Status Skeleton */}
+              <div>
+                <div className="h-6 w-16 animate-pulse rounded-full bg-gray-200" />
+              </div>
+
+              {/* Action Skeleton */}
+              <div className="flex items-center gap-2">
+                <div className="h-9 w-9 animate-pulse rounded-lg bg-gray-200" />
+                <div className="h-9 w-9 animate-pulse rounded-lg bg-gray-200" />
+              </div>
+            </div>
+          ))
+        ) : isError ? (
+          /* ================= ERROR STATE ================= */
+          <div className="flex min-h-[300px] flex-col items-center justify-center px-6 text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-red-50 text-red-400">
+              <Eye size={24} />
+            </div>
+
+            <h3 className="font-semibold text-red-600">
+              Failed to Load Categories
+            </h3>
+
+            <p className="mt-1 text-sm text-gray-400">
+              Something went wrong while loading categories.
+            </p>
+          </div>
+        ) : category.length > 0 ? (
+          /* ================= CATEGORY DATA ================= */
+          category.map((item, index) => {
+            const categoryKey = item.id
+              ? `category-${item.id}`
+              : `category-index-${index}`;
+
+            // Check status value (Supports boolean, number 1/0, or string "active"/"inactive")
+            const isActive =
+              item.status === true ||
+              item.status === 1 ||
+              item.status === "active" ||
+              item.is_active === true ||
+              item.is_active === 1;
+
+            return (
+              <div
+                key={categoryKey}
+                className="
+                  grid
+                  grid-cols-[minmax(250px,1fr)_minmax(250px,2fr)_120px_120px]
+                  items-center
+                  gap-4
+                  min-h-[75px]
+                  px-6
+                  bg-gray-50/50
+                  border-b
+                  border-gray-200
+                  hover:bg-gray-100
+                  transition-all
+                "
+              >
+                {/* ================= CATEGORY NAME ================= */}
+                <div className="min-w-0">
+                  <h1 className="truncate font-semibold text-gray-900">
+                    {item.name}
+                  </h1>
+                </div>
+
+                {/* ================= DESCRIPTION ================= */}
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-gray-600">
+                    {item.description || "-"}
+                  </p>
+                </div>
+
+                {/* ================= STATUS ================= */}
+               <div>
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      isActive
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-red-100 text-red-500"
+                    }`}
+                  >
+                    {/* សញ្ញាចុចមូល (Dot Indicator) */}
+                    <span
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        isActive ? "bg-emerald-500" : "bg-red-500"
+                      }`}
+                    />
+                    {isActive ? "Active" : "Inactive"}
+                  </span>
+                </div>
+
+                {/* ================= ACTIONS ================= */}
+                <div className="flex items-center gap-3">
+                  {/* Edit */}
+                  <button
+                    type="button"
+                    onClick={() => openEdit(item)}
+                    className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-lg
+                      border
+                      border-gray-300
+                      cursor-pointer
+                      transition
+                      hover:bg-white
+                    "
+                  >
+                    <Edit className="text-yellow-500" size={18} />
+                  </button>
+
+                  {/* Delete */}
+                  <button
+                    type="button"
+                    onClick={() => openDelete(item)}
+                    className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-lg
+                      border
+                      border-gray-300
+                      cursor-pointer
+                      transition
+                      hover:bg-white
+                    "
+                  >
+                    <Trash2 className="text-red-500" size={18} />
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          /* ================= EMPTY STATE ================= */
+          <div className="flex min-h-[300px] flex-col items-center justify-center px-6 text-center">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gray-100 text-gray-400">
+              <Eye size={24} />
+            </div>
+
+            <h3 className="font-semibold text-gray-700">
+              No Category Found
+            </h3>
+
+            <p className="mt-1 text-sm text-gray-400">
+              There are no categories available yet.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
-export default CategoryTable
+export default CategoryTable;
