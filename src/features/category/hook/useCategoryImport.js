@@ -17,8 +17,8 @@ export const useCategoryImport = () => {
 
       // 2. Refresh Category Stats
       await queryClient.invalidateQueries({
-        queryKey: ["categoryState"],
-      });
+        queryKey: ["categoriesState"],
+      });0
 
       showToast(
         data?.message || "ការបញ្ចូលទិន្នន័យ Category បានជោគជ័យ!",

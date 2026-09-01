@@ -43,7 +43,7 @@ function CategoryFilter({ onFilter }) {
                 handleFilter();
               }
             }}
-            placeholder="Search brand..."
+            placeholder="Search category..."
             className="
               h-10 w-full rounded-lg
               border border-gray-200

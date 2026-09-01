@@ -156,9 +156,10 @@ function Category() {
     mutateAsync: editeCategory,
     isPending:isEditing
   }=useEditCategory();
+
   const {
     createCategoryAsync,
-    
+    isPending: isPending,
   }=useCreateCategory();
   const {
     mutate: deleteCategory,
@@ -335,6 +336,7 @@ function Category() {
         <ModelCategory
           onClose={closeAdd}
           createCategory={createCategoryAsync}
+          isPending={isPending}
         />
 
       )}

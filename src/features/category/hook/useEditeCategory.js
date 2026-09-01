@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CategoryService from "../service/CategoryService";
+import { showToast } from "../../../utils/toast";
 
 export default function useEditCategory() {
   const queryClient = useQueryClient();
@@ -15,6 +16,7 @@ export default function useEditCategory() {
       queryClient.invalidateQueries({
         queryKey: ["categoriesState"],
       });
+      showToast("កែប្រែ Category ថ្មីបានជោគជ័យ!", "success");
     },
 
     // ដំណាក់កាលមាន Error

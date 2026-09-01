@@ -3,13 +3,15 @@ import { privateApi } from "../../../services/api";
 const CategoryService = {
   // 1. Get All Categories
   async getAll(params = {}) {
-  // លុប key ណាដែលមាន value ទទេស្អាតចេញ
-  const cleanParams = Object.fromEntries(
-    Object.entries(params).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
-  );
-  const response = await privateApi.get("/category", { params: cleanParams });
-  return response.data;
-},
+    // លុប key ណាដែលមាន value ទទេស្អាតចេញ
+    const cleanParams = Object.fromEntries(
+      Object.entries(params).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+    );
+    const response = await privateApi.get("/category", { params: cleanParams });
+    console.log("CATEGORY RESPONSE:", response.data);
+
+    return response.data;
+  },
 
   // 2. Get Single Category Details
   async getById(id) {
@@ -48,14 +50,30 @@ const CategoryService = {
     return response.data;
   },
   async state() {
-  try {
-    // កែពី /categories/state ទៅ /category/state
-    const response = await privateApi.get("/category/state"); 
-    return response.data;
-  } catch (error) {
-    throw error;
+    try {
+      // កែពី /categories/state ទៅ /category/state
+      const response = await privateApi.get("/category/state");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+  async exportCategory(type = "excel", filters = {}) {
+    const response = await privateApi.get(
+        `/category/export/${type}`,
+        {
+            params: filters,
+            responseType: "blob",
+        }
+    );
+
+    return response;
+},
+
+  // Alias so calling BrandService.export(...) also works
+  export(type, filters) {
+    return this.exportCategory(type, filters);
   }
-}
 };
 
 export default CategoryService;

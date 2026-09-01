@@ -5,7 +5,7 @@ import { useCategory } from "../../../context/CategoryContext";
 function CategoryTable({ category = [], isLoading = false, isError }) {
   const { openEdit, openDelete } = useCategory();
   const skeletonRows = Array.from({ length: 6 });
-
+  // console.log(category);
   return (
     <div className="mt-5 h-[503px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
       {/* ================= HEADER ================= */}

@@ -18,7 +18,7 @@ function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,
     },
   });
   const isSelecting=Boolean(selectedCategory);
-  console.log(selectedCategory);
+  // console.log(selectedCategory);
 
   // set data to formInput
   useEffect(()=>{

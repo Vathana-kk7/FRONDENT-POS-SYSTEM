@@ -1,19 +1,21 @@
-
 import React, { useEffect, useRef, useState } from "react";
 import {
   Download,
   FileText,
   File,
   FileSpreadsheet,
+  Loader2,
+  FileJson,
 } from "lucide-react";
+import useCategoryExport from "../hook/useExportCategory";
 
-function ExportCategory() {
-const [isExportOpen, setIsExportOpen]=useState(false);
+function ExportCategory({ filters = {} }) {
+  const [isExportOpen, setIsExportOpen] = useState(false);
   const dropdownRef = useRef(null);
+  
+  const { handleExport, isExporting } = useCategoryExport();
 
-  // =========================
   // Close dropdown when clicking outside
-  // =========================
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -24,50 +26,45 @@ const [isExportOpen, setIsExportOpen]=useState(false);
       }
     };
 
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [setIsExportOpen]);
+  }, []);
+
+  const triggerExport = async (type) => {
+    setIsExportOpen(false);
+    await handleExport(type, filters);
+  };
 
   return (
-    <div
-      ref={dropdownRef}
-      className="relative"
-    >
-      {/* =========================
-          Export Button
-      ========================= */}
+    <div ref={dropdownRef} className="relative">
+      {/* Export Button */}
       <button
         type="button"
-        onClick={() =>
-          setIsExportOpen((prev) => !prev)
-        }
+        disabled={isExporting}
+        onClick={() => setIsExportOpen((prev) => !prev)}
         className="
           flex h-11 w-40 items-center justify-center
           rounded-xl border border-gray-200
           bg-white text-black shadow-lg
           transition hover:bg-gray-50
+          disabled:opacity-50 disabled:cursor-not-allowed
           cursor-pointer
         "
       >
-        <Download size={20} />
+        {isExporting ? (
+          <Loader2 size={20} className="animate-spin text-gray-600" />
+        ) : (
+          <Download size={20} />
+        )}
 
         <span className="ml-2">
-          Export
+          {isExporting ? "Exporting..." : "Export"}
         </span>
       </button>
 
-      {/* =========================
-          Export Dropdown
-      ========================= */}
+      {/* Export Dropdown */}
       {isExportOpen && (
         <div
           className="
@@ -79,6 +76,7 @@ const [isExportOpen, setIsExportOpen]=useState(false);
           {/* CSV */}
           <button
             type="button"
+            onClick={() => triggerExport("csv")}
             className="
               flex w-full items-center gap-3
               rounded-lg px-3 py-3
@@ -87,19 +85,14 @@ const [isExportOpen, setIsExportOpen]=useState(false);
               cursor-pointer
             "
           >
-            <FileText
-              size={20}
-              className="text-red-500"
-            />
-
-            <span className="font-medium text-gray-500">
-              CSV File
-            </span>
+            <FileText size={20} className="text-red-500" />
+            <span className="font-medium text-gray-500">CSV File</span>
           </button>
 
           {/* DOC */}
           <button
             type="button"
+            onClick={() => triggerExport("doc")}
             className="
               flex w-full items-center gap-3
               rounded-lg px-3 py-3
@@ -108,19 +101,14 @@ const [isExportOpen, setIsExportOpen]=useState(false);
               cursor-pointer
             "
           >
-            <File
-              size={20}
-              className="text-blue-400"
-            />
-
-            <span className="font-medium text-gray-500">
-              DOC File
-            </span>
+            <File size={20} className="text-blue-400" />
+            <span className="font-medium text-gray-500">DOC File</span>
           </button>
 
           {/* Excel */}
           <button
             type="button"
+            onClick={() => triggerExport("excel")}
             className="
               flex w-full items-center gap-3
               rounded-lg px-3 py-3
@@ -129,14 +117,24 @@ const [isExportOpen, setIsExportOpen]=useState(false);
               cursor-pointer
             "
           >
-            <FileSpreadsheet
-              size={20}
-              className="text-green-600"
-            />
+            <FileSpreadsheet size={20} className="text-green-600" />
+            <span className="font-medium text-gray-700">Excel File</span>
+          </button>
 
-            <span className="font-medium text-gray-700">
-              Excel File
-            </span>
+          {/* PDF */}
+          <button
+            type="button"
+            onClick={() => triggerExport("pdf")}
+            className="
+              flex w-full items-center gap-3
+              rounded-lg px-3 py-3
+              text-left transition
+              hover:bg-red-50
+              cursor-pointer
+            "
+          >
+            <FileJson size={20} className="text-red-600" />
+            <span className="font-medium text-gray-700">PDF File</span>
           </button>
         </div>
       )}
