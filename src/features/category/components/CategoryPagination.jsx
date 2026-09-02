@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 
 export default function CategoryPagination({currentPage,lastPage,onChange}) {
   return (
-    <Stack spacing={2} alignItems="center">
+    <Stack spacing={2} style={{ alignItems: 'center' }}>
       <Pagination
         count={lastPage}
         page={currentPage}

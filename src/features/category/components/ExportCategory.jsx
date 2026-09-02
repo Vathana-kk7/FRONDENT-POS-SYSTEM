@@ -2,18 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Download,
   FileText,
-  File,
   FileSpreadsheet,
   Loader2,
-  FileJson,
 } from "lucide-react";
-import useCategoryExport from "../hook/useExportCategory";
+import { useExportCategory } from "../hook/useExportCategory";
+import { showToast } from "../../../utils/toast";
 
 function ExportCategory({ filters = {} }) {
   const [isExportOpen, setIsExportOpen] = useState(false);
   const dropdownRef = useRef(null);
   
-  const { handleExport, isExporting } = useCategoryExport();
+  const { exportCategory, isExporting } = useExportCategory();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -31,12 +30,103 @@ function ExportCategory({ filters = {} }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+    const handlePdfDownload = async () => {
+        setIsExportOpen(false);
 
-  const triggerExport = async (type) => {
-    setIsExportOpen(false);
-    await handleExport(type, filters);
-  };
+        try {
+            const response = await exportCategory({
+                type: "pdf",
+                filters,
+            });
 
+            const blob = response.data;
+
+            const url =
+                window.URL.createObjectURL(blob);
+
+            const link =
+                document.createElement("a");
+
+            link.href = url;
+
+            link.download = `categories_${new Date()
+                .toISOString()
+                .slice(0, 10)}.pdf`;
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+            window.URL.revokeObjectURL(url);
+
+            showToast(
+                "ទាញយក Category PDF បានជោគជ័យ!",
+                "success"
+            );
+
+        } catch (error) {
+            console.error(
+                "PDF Export Error:",
+                error
+            );
+
+            showToast(
+                "មានបញ្ហាក្នុងការទាញយក PDF!",
+                "error"
+            );
+        }
+    };
+
+   const handleExcelDownload = async () => {
+          setIsExportOpen(false);
+  
+          try {
+              const response = await exportCategory({
+                  type: "excel",
+                  filters,
+              });
+  
+              const blob = response.data;
+  
+              const url =
+                  window.URL.createObjectURL(blob);
+  
+              const link =
+                  document.createElement("a");
+  
+              link.href = url;
+  
+              link.download = `categories_${new Date()
+                  .toISOString()
+                  .slice(0, 10)}.xlsx`;
+  
+              document.body.appendChild(link);
+  
+              link.click();
+  
+              link.remove();
+  
+              window.URL.revokeObjectURL(url);
+  
+              showToast(
+                  "ទាញយក Category Excel បានជោគជ័យ!",
+                  "success"
+              );
+  
+          } catch (error) {
+              console.error(
+                  "Excel Export Error:",
+                  error
+              );
+  
+              showToast(
+                  "មានបញ្ហាក្នុងការទាញយក Excel!",
+                  "error"
+              );
+          }
+      };
   return (
     <div ref={dropdownRef} className="relative">
       {/* Export Button */}
@@ -76,7 +166,7 @@ function ExportCategory({ filters = {} }) {
           {/* CSV */}
           <button
             type="button"
-            onClick={() => triggerExport("csv")}
+            onClick={handlePdfDownload}
             className="
               flex w-full items-center gap-3
               rounded-lg px-3 py-3
@@ -86,29 +176,16 @@ function ExportCategory({ filters = {} }) {
             "
           >
             <FileText size={20} className="text-red-500" />
-            <span className="font-medium text-gray-500">CSV File</span>
-          </button>
-
-          {/* DOC */}
-          <button
-            type="button"
-            onClick={() => triggerExport("doc")}
-            className="
-              flex w-full items-center gap-3
-              rounded-lg px-3 py-3
-              text-left transition
-              hover:bg-blue-50
-              cursor-pointer
-            "
-          >
-            <File size={20} className="text-blue-400" />
-            <span className="font-medium text-gray-500">DOC File</span>
+            <span className="font-medium text-gray-500">PDF File</span>
           </button>
 
           {/* Excel */}
           <button
             type="button"
-            onClick={() => triggerExport("excel")}
+            disabled={isExporting}
+            onClick={
+              handleExcelDownload
+            }
             className="
               flex w-full items-center gap-3
               rounded-lg px-3 py-3
@@ -119,22 +196,6 @@ function ExportCategory({ filters = {} }) {
           >
             <FileSpreadsheet size={20} className="text-green-600" />
             <span className="font-medium text-gray-700">Excel File</span>
-          </button>
-
-          {/* PDF */}
-          <button
-            type="button"
-            onClick={() => triggerExport("pdf")}
-            className="
-              flex w-full items-center gap-3
-              rounded-lg px-3 py-3
-              text-left transition
-              hover:bg-red-50
-              cursor-pointer
-            "
-          >
-            <FileJson size={20} className="text-red-600" />
-            <span className="font-medium text-gray-700">PDF File</span>
           </button>
         </div>
       )}

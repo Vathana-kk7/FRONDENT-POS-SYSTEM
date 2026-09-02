@@ -110,7 +110,7 @@ function ModelProduct({ onClose }) {
         </div>
         <div className="flex justify-between mt-15">
             <div>
-                <button className="bg-blue-800 p-2 px-5 text-white cursor-pointer rounded-lg">Save New</button>
+                <button className="bg-blue-800 p-2 px-5 text-white cursor-pointer rounded-lg">Save & Add Another</button>
             </div>
             <div className="flex gap-5">
                 <div><button className="bg-while p-2 px-5 text-black border border-gray-300 cursor-pointer rounded-lg">Cancle</button></div>

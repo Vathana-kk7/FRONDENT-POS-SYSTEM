@@ -240,7 +240,7 @@ function Category() {
             <ImportCategory />
           </div>
           <div>
-            <ExportCategory/>
+            <ExportCategory filters={filters}/>
           </div>
 
         </div>

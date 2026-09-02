@@ -66,9 +66,8 @@ const CategoryService = {
             responseType: "blob",
         }
     );
-
-    return response;
-},
+      return response;
+  },
 
   // Alias so calling BrandService.export(...) also works
   export(type, filters) {

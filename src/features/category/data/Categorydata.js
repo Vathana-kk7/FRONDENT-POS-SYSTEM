@@ -3,19 +3,19 @@ import { Building2, CheckCircle, DollarSign, FolderTree, Package, PackageSearch,
 export const CategoryCardConfig = [
   {
     id: "total",
-    title: "Total Brands",
+    title: "Total Categories",
     color: "bg-blue-600",
     icon: Building2,
   },
   {
     id: "active",
-    title: "Active Brands",
+    title: "Active Categories",
     color: "bg-green-600",
     icon: CheckCircle,
   },
   {
     id: "inactive",
-    title: "Inactive Brands",
+    title: "Inactive Categories",
     color: "bg-red-500",
     icon: XCircle,
   },
