@@ -16,6 +16,9 @@ export default function useEditCategory() {
       queryClient.invalidateQueries({
         queryKey: ["categoriesState"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["category"],
+      });
       showToast("កែប្រែ Category ថ្មីបានជោគជ័យ!", "success");
     },
 

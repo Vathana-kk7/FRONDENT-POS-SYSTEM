@@ -4,10 +4,10 @@ import CategoryService from "../service/CategoryService";
 export function useExportCategory(){
     const mutation=useMutation({
         mutationFn:({type,filters})=>
-            CategoryService.exportCategory(
-                type,
-                filters,
-            ),
+        CategoryService.exportCategory(
+            type,
+            filters,
+        ),
     })
     return {
         exportCategory:mutation.mutateAsync,

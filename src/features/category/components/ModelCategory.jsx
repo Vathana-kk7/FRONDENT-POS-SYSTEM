@@ -169,7 +169,7 @@ function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,
               disabled={isPending || (isSelecting && !isDirty)} // ប្រើ isPending
               className="inline-flex items-center gap-2 cursor-pointer rounded-lg bg-blue-800 px-5 py-2 text-sm text-white transition hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isPending && <Loader2 size={16} className="animate-spin" />}
+                
               {isPending
                 ? isSelecting
                   ? "Updating..."

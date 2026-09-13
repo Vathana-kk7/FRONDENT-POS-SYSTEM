@@ -14,7 +14,7 @@ import {
 import SortableCard from "../components/SortableCard";
 import { ProductsCards } from "../data/ProductCate";
 import { useProductLayout } from "../../../context/ProductLayoutContext";
-import { Download, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import ModelProduct from "../components/ModelProduct";
 import ProductFilter from "../components/ProductFilter";
 import ProductTable from "../components/ProductTable";
@@ -22,12 +22,13 @@ import ProductPagination from "../components/ProductPagination";
 import ViewProductModal from "../components/ViewProductModal";
 import DeleteModal from "../../../components/common/Delete";
 import EditeProduct from "../components/EditeProduct";
-import { FileText, FileSpreadsheet, File } from "lucide-react";
 import {useProduct } from "../../../context/ProductContext";
+import useCreateProduct from "../hook/useCreateProduct";
+import ProductImport from "../components/ProductImport";
 function Product() {
   const { dragEnabled } = useProductLayout();
   const [cards, setCards] = useState(ProductsCards);
-  const [isImportOpen, setIsImportOpen] = useState(false);
+  
  const {
   isAddOpen,
   isDeleteOpen,
@@ -65,6 +66,10 @@ function Product() {
     }
   }
 
+  const {
+    CreateProductAsync,
+    isPending
+  }=useCreateProduct();
   return (
     <>
     <div className="px-5">
@@ -79,132 +84,7 @@ function Product() {
               Add Product
             </span>
           </button>
-          <div className="relative">
-
-            {/* Import Button */}
-            <button
-              type="button"
-              onClick={() => setIsImportOpen(!isImportOpen)}
-              className="
-                bg-white
-                flex
-                justify-center
-                items-center
-                text-black
-                w-40
-                h-11
-                rounded-xl
-                shadow-lg
-                border
-                border-gray-200
-                cursor-pointer
-                hover:bg-gray-50
-                transition
-              "
-            >
-              <Download size={20} />
-
-              <span className="ms-2">
-                Import
-              </span>
-            </button>
-            {/* Dropdown */}
-            {isImportOpen && (
-              <div
-                className="
-                  absolute
-                  right-0
-                  top-14
-                  z-50
-                  w-48
-                  bg-white
-                  border
-                  border-gray-200
-                  rounded-xl
-                  shadow-xl
-                  p-2
-
-                  animate-[dropdown_0.2s_ease-out]
-                "
-              >
-
-                {/* PDF */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-red-50
-                    transition
-                  "
-                >
-                  <FileText
-                    size={20}
-                    className="text-red-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    PDF File
-                  </span>
-                </div>
-
-
-                {/* DOC */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-blue-50
-                    transition
-                  "
-                >
-                  <File
-                    size={20}
-                    className="text-blue-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    DOC File
-                  </span>
-                </div>
-
-
-                {/* Excel */}
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-green-50
-                    transition
-                  "
-                >
-                  <FileSpreadsheet
-                    size={20}
-                    className="text-green-600"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    Excel File
-                  </span>
-                </div>
-
-              </div>
-            )}
-          </div>
+          <ProductImport/>
         </div>
       </div>
       {/* Cart */}
@@ -261,7 +141,9 @@ function Product() {
       {/* Model Product */}
       {isAddOpen  && (
         <ModelProduct
+          onSubmitApi={(formData) => CreateProductAsync(formData)}
           onClose={closeAdd}
+          isPending={isPending}
         />
       )}
       {/* Delete */}

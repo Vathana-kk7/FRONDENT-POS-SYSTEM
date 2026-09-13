@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 
 export default function ProductPagination() {
   return (
-    <Stack spacing={2} alignItems="center">
+    <Stack spacing={2} sx={{ alignItems: "center", }}>
       <Pagination
         count={10}
         page={1}
