@@ -9,7 +9,7 @@ export default function useDeleteCategory() {
       return await CategoryService.delete(id);
     },
 
-    onSuccess: async () => {
+    onSuccess: async () => { 
       // 1. Invalidate Category Table Queries (រួមទាំង pagination/search)
       await queryClient.invalidateQueries({
         predicate: (query) =>

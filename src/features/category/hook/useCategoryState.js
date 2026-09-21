@@ -5,13 +5,13 @@ export default function useCategoryState(){
     const query=useQuery({
         queryKey:["categoriesState"],
         queryFn:CategoryService.state,
-        staleTime:0
-    });
+        staleTime:60*1000
+    }); 
     return {
         stats:query.data?.data??{
             total:0,
             active:0,
-            inactive:0,
+            inactive:0, 
             with_product:0,
             growth:null
         },

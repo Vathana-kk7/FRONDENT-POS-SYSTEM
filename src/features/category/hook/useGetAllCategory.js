@@ -11,7 +11,18 @@ export default function useGetAllCategory({page=1,perPage=10,search="",status=""
             search,
             status
         }),
-        staleTime:0,
+        staleTime: 60 * 1000, 
+        // Keep previous page data while fetching new page 
+        placeholderData: (previousData) => previousData, 
+        // Prevent unnecessary refetch when browser regains focus 
+        refetchOnWindowFocus: false,    
+        retry: (failureCount, error) => {
+             
+            const status = error?.response?.status;
+             if (status === 429){
+                return false; 
+            } 
+            return failureCount < 2; },
     })
     return {
         query,

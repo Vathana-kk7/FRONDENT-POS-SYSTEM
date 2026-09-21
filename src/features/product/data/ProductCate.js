@@ -72,37 +72,39 @@ export const products = [
     status: "Out of Stock",
   },
 ];
+
+
 export const ProductsCards = [
   {
     id: 1,
-    title: "Total Products",
-    value: 1200,
-    growth: "8.5%",
+    key: "total_value",
+    title: "Total Value",
     color: "bg-blue-600",
     icon: PackageSearch,
   },
+
   {
     id: 2,
-    title: "Low Stock",
-    value: 356,
-    growth: "5.2%",
-    color: "bg-green-600",
-    icon: ShoppingCart,
-  },
-  {
-    id: 3,
-    title: "Out of Stock",
-    value: 90,
-    growth: "12%",
-    color: "bg-purple-600",
-    icon: Users,
-  },
-  {
-    id: 4,
-    title: "Total Value",
-    value: "$25,000",
-    growth: "15%",
+    key: "total_products",
+    title: "Total Product",
     color: "bg-orange-500",
     icon: DollarSign,
   },
+
+  {
+    id: 3,
+    key: "low_stock",
+    title: "Low Stock",
+    color: "bg-green-600",
+    icon: ShoppingCart,
+  },
+
+  {
+    id: 4,
+    key: "out_of_stock",
+    title: "Out of Stock",
+    color: "bg-purple-600",
+    icon: Users,
+  },
 ];
+

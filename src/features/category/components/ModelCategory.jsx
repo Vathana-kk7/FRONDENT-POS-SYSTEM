@@ -1,7 +1,6 @@
 import { Loader2, X } from "lucide-react";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import useCreateCategory from "../hook/useCreateCategory";
 
 function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,createCategory}) {
 
@@ -9,6 +8,7 @@ function ModelCategory({ onClose,selectedCategory=null,editeCategory,isPending ,
     register,
     handleSubmit,
     reset,
+    setError,
     formState: { errors,isDirty },
   } = useForm({
     defaultValues: {

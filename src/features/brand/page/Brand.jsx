@@ -8,15 +8,11 @@ import ProductPagination from "../components/ProductPagination";
 import SortableCard from "../components/SortableCard";
 import ImportBrand from "../components/ImportBrand";
 import ExportBrand from "../components/ExportBrand";
-
 import { useBrandLayout } from "../../../context/BrandLayoutContext";
 import { useBrandContext } from "../../../context/BrandContext";
-
 import { arrayMove, rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import { closestCenter, DndContext } from "@dnd-kit/core";
-
 import { BrandCardConfig } from "../data/BrandData";
-
 import useCreateBrand from "../hooks/useCreateBrand";
 import useBrands from "../hooks/useBrand";
 import useEditBrand from "../hooks/useEditeBrand";

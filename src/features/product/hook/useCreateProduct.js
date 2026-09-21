@@ -11,10 +11,13 @@ export default function useCreateProduct() {
     onSuccess: (res) => {
       // Refresh list products ឡើងវិញ
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: ["product"],
       });
       queryClient.invalidateQueries({
         queryKey: ["brand-stats"],
+      });
+      queryClient.refetchQueries({
+        queryKey: ["product-state"],
       });
       queryClient.invalidateQueries({
         queryKey: ["categoriesState"],

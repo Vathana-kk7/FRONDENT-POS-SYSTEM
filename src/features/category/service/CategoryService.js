@@ -8,8 +8,6 @@ const CategoryService = {
       Object.entries(params).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
     );
     const response = await privateApi.get("/category", { params: cleanParams });
-    console.log("CATEGORY RESPONSE:", response.data);
-
     return response.data;
   },
 

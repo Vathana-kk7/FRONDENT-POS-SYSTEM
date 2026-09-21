@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   DndContext,
@@ -14,116 +14,314 @@ import {
 import SortableCard from "../components/SortableCard";
 import { ProductsCards } from "../data/ProductCate";
 import { useProductLayout } from "../../../context/ProductLayoutContext";
+
 import { Plus } from "lucide-react";
+
 import ModelProduct from "../components/ModelProduct";
 import ProductFilter from "../components/ProductFilter";
 import ProductTable from "../components/ProductTable";
 import ProductPagination from "../components/ProductPagination";
 import ViewProductModal from "../components/ViewProductModal";
 import DeleteModal from "../../../components/common/Delete";
-import EditeProduct from "../components/EditeProduct";
-import {useProduct } from "../../../context/ProductContext";
-import useCreateProduct from "../hook/useCreateProduct";
 import ProductImport from "../components/ProductImport";
-function Product() {
-  const { dragEnabled } = useProductLayout();
-  const [cards, setCards] = useState(ProductsCards);
-  
- const {
-  isAddOpen,
-  isDeleteOpen,
-  isViewOpen,
-  isEditOpen,
-  selectedProduct,
 
-  openAdd,
-  closeAdd,
-  openView,
-  closeView,
-  openEdit,
-  closeEdit,
-  openDelete,
-  closeDelete,
-} = useProduct();
+import { useProduct } from "../../../context/ProductContext";
+
+import useCreateProduct from "../hook/useCreateProduct";
+import useGetAllProduct from "../hook/useGetAllProduct";
+import useGetAllCategory from "../../category/hook/useGetAllCategory";
+import useEditeProduct from "../hook/useEditeProduct";
+import useDeleteProduct from "../hook/useDeleteProduct";
+import useProductState from "../hook/useProductState";
+
+function Product() {
+  // =========================================================
+  // Product Layout
+  // =========================================================
+
+  const { dragEnabled } = useProductLayout();
+
+  // =========================================================
+  // Product Context
+  // =========================================================
+
+  const {
+    isAddOpen,
+    isDeleteOpen,
+    isViewOpen,
+    isEditOpen,
+    selectedProduct,
+
+    openAdd,
+    closeAdd,
+
+    openView,
+    closeView,
+
+    openEdit,
+    closeEdit,
+
+    openDelete,
+    closeDelete,
+  } = useProduct();
+
+  // =========================================================
+  // Card Order State
+  // =========================================================
+
+  const [orderedCards, setOrderedCards] = useState(ProductsCards);
+
+  // =========================================================
+  // Drag & Drop
+  // =========================================================
 
   function handleDragEnd(event) {
-
     const { active, over } = event;
 
-    if (!over) return;
-
-    if (active.id !== over.id) {
-
-      const oldIndex = cards.findIndex(
-        (item) => item.id === active.id
-      );
-
-      const newIndex = cards.findIndex(
-        (item) => item.id === over.id
-      );
-
-      setCards(arrayMove(cards, oldIndex, newIndex));
+    // User drops outside another sortable item
+    if (!over) {
+      return;
     }
+
+    // Same position
+    if (active.id === over.id) {
+      return;
+    }
+
+    // Find old position
+    const oldIndex = orderedCards.findIndex(
+      (item) => item.id === active.id
+    );
+
+    // Find new position
+    const newIndex = orderedCards.findIndex(
+      (item) => item.id === over.id
+    );
+
+    // Safety check
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    // Change card order
+    setOrderedCards((currentCards) =>
+      arrayMove(currentCards, oldIndex, newIndex)
+    );
   }
+
+  // =========================================================
+  // Create Product
+  // =========================================================
 
   const {
     CreateProductAsync,
-    isPending
-  }=useCreateProduct();
+    isPending,
+  } = useCreateProduct();
+
+  // =========================================================
+  // Get Products
+  // =========================================================
+  const [page,setPage]=useState(1);
+  const perPage = 10;
+  const {
+    query,
+    product,
+    currentPage,
+    lastPage,
+    total,
+    from,
+    to,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetAllProduct({
+    page,
+    perPage
+  });
+  const handleChange = (event,value)=>{
+    if (isFetching) {
+    return;
+  }
+    setPage(value);
+  }
+  // =========================================================
+  // Get Categories
+  // =========================================================
+  const { category } = useGetAllCategory();
+  // =========================================================
+  // Edit Product
+  // =========================================================
+  const {
+    mutateAsync: editProduct,
+    isPending: isEditPending,
+  } = useEditeProduct();
+  // =========================================================
+  // Delete Product
+  // =========================================================
+  const {
+    mutate: deleteProduct,
+    isPending: isDeleting,
+  } = useDeleteProduct();
+  const handleConfirmDelete = () => {
+    const targetId =selectedProduct?.id ??selectedProduct?.brand_id;
+    if (!targetId) {
+      return;
+    }
+    deleteProduct(targetId, {
+      onSuccess: () => {
+        closeDelete();
+      },
+    });
+  };
+const productState = useProductState();
+const { state } = productState;
+const displayCards = useMemo(() => {
+  return orderedCards.map((card) => ({
+    ...card,
+    value: state?.[card.key] ?? 0,
+    growth: state?.growth ?? null,
+  }));
+}, [orderedCards, state]);
   return (
     <>
-    <div className="px-5">
-      <div className="flex justify-between">
-        <h1 className="text-xl font-medium">
-          Products
-        </h1>
-        <div className="flex gap-3">
-         <button type="button" onClick={openAdd} className="flex h-11 w-40 items-center justify-center  rounded-xl bg-blue-800 text-white shadow-lg  transition hover:bg-blue-900 cursor-pointer">
-            <Plus size={20} />
-            <span className="ms-2">
-              Add Product
-            </span>
-          </button>
-          <ProductImport/>
-        </div>
-      </div>
-      {/* Cart */}
-      <DndContext
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={cards}
-          strategy={rectSortingStrategy}
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-5">
+      <div className="px-5">
+        {/* ===================================================
+            HEADER
+        =================================================== */}
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl font-medium">
+            Products
+          </h1>
+          <div className="flex gap-3">
 
-            {cards.map((card) => (
-              <SortableCard
-                key={card.id}
-                card={card}
-                disabled={!dragEnabled}
-              />
-            ))}
+            {/* Add Product */}
+            <button
+              type="button"
+              onClick={openAdd}
+              className="
+                flex
+                h-11
+                w-40
+                items-center
+                justify-center
+                rounded-xl
+                bg-blue-800
+                text-white
+                shadow-lg
+                transition
+                hover:bg-blue-900
+                cursor-pointer
+              "
+            >
+              <Plus size={20} />
+
+              <span className="ms-2">
+                Add Product
+              </span>
+            </button>
+
+            {/* Import Product */}
+            <ProductImport />
+
           </div>
-        </SortableContext>
-      </DndContext>
-      {/* Search */}
-      <div >
-          <ProductFilter/>
-          <ProductTable  
+        </div>
+
+        {/* ===================================================
+            PRODUCT STATISTICS CARDS
+        =================================================== */}
+
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+
+          <SortableContext
+            items={displayCards.map((card) => card.id)}
+            strategy={rectSortingStrategy}
+          >
+
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-2
+                xl:grid-cols-4
+                gap-6
+                mt-5
+              "
+            >
+
+              {displayCards.map((card) => (
+                <SortableCard
+                  key={card.id}
+                  card={card}
+                  disabled={!dragEnabled}
+                />
+              ))}
+
+            </div>
+
+          </SortableContext>
+
+        </DndContext>
+
+        {/* ===================================================
+            PRODUCT FILTER
+        =================================================== */}
+
+        <div>
+
+          <ProductFilter />
+
+          {/* =================================================
+              PRODUCT TABLE
+          ================================================= */}
+
+          <ProductTable
             onView={openView}
             onEdit={openEdit}
             onDelete={openDelete}
+            productData={product}
+            isLoading={isLoading}
+            categoryData={category}
           />
-            <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
-              <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
-              <ProductPagination />
-            </div>
+
+          {/* =================================================
+              PAGINATION
+          ================================================= */}
+
+          <div
+            className="
+              flex
+              justify-between
+              border
+              border-gray-200
+              bg-gray-100
+              p-3
+            "
+          >
+
+            <h1 className="font-semibold text-gray-600">
+              Showing {from} to {to} of {total} products
+            </h1>
+
+            <ProductPagination
+              currentPage={currentPage}
+              lastPage={lastPage}
+              onChange={handleChange}
+              disabled={isFetching}
+
+            />
+
+          </div>
+
+        </div>
       </div>
-    </div>
-      {/* Product Model */}
-      {/* View */}
+
+      {/* =====================================================
+          VIEW PRODUCT
+      ===================================================== */}
+
       {isViewOpen && (
         <ViewProductModal
           product={selectedProduct}
@@ -131,35 +329,50 @@ function Product() {
         />
       )}
 
-      {/* Edit */}
+      {/* =====================================================
+          EDIT PRODUCT
+      ===================================================== */}
+
       {isEditOpen && (
-        <EditeProduct
-          product={selectedProduct}
-          closeEdit={closeEdit}
+        <ModelProduct
+          onClose={closeEdit}
+          selectedProduct={selectedProduct}
+          editeProduct={editProduct}
+          isEditing={true}
+          isPending={isEditPending}
         />
       )}
-      {/* Model Product */}
-      {isAddOpen  && (
+
+      {/* =====================================================
+          ADD PRODUCT
+      ===================================================== */}
+
+      {isAddOpen && (
         <ModelProduct
-          onSubmitApi={(formData) => CreateProductAsync(formData)}
+          onSubmitApi={(formData) =>
+            CreateProductAsync(formData)
+          }
           onClose={closeAdd}
           isPending={isPending}
         />
       )}
-      {/* Delete */}
+
+      {/* =====================================================
+          DELETE PRODUCT
+      ===================================================== */}
+
       {isDeleteOpen && (
         <DeleteModal
           item={selectedProduct}
           title="Delete Product?"
-          message="Are you sure you want to delete this product? This action cannot be undone."
+          message="Are you sure you want to delete this product?"
+          isPending={isDeleting}
           onClose={closeDelete}
-          onConfirm={() => {
-            console.log("Delete product:", selectedProduct);
-            closeDelete();
-          }}
+          onConfirm={handleConfirmDelete}
         />
       )}
-  </>
+
+    </>
   );
 }
 

@@ -1,24 +1,16 @@
 import React, { useMemo, useState } from "react";
-
-import CategoryCart from "../components/CategoryCart";
 import CategoryFilter from "../components/CategoryFilter";
 import CategoryTable from "../components/CategoryTable";
-import EditeCategory from "../components/EditeCategory";
 import ModelCategory from "../components/ModelCategory";
 
-import { CategoryCardConfig, Categorydata } from "../data/Categorydata";
+import { CategoryCardConfig} from "../data/Categorydata";
 
 import { useCategory } from "../../../context/CategoryContext";
 import { useCategoryLayout } from "../../../context/CategoryLayoutContext";
 
 import DeleteModal from "../../../components/common/Delete";
 
-import { Download, Plus } from "lucide-react";
-import {
-  FileText,
-  FileSpreadsheet,
-  File,
-} from "lucide-react";
+import {Plus } from "lucide-react";
 
 import {
   DndContext,
@@ -59,8 +51,6 @@ function Category() {
   // ==============================
   // Import Dropdown
   // ==============================
-
-  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // ==============================
   // Category Modal Context
@@ -165,7 +155,6 @@ function Category() {
     mutate: deleteCategory,
     isPending: isDeleting,
   } = useDeleteCategory();
-  const [deleteItem, setDeleteItem] = useState(null);
   
  const handleConfirmDelete = () => {
   const targetId = selectedCategory?.id ?? selectedCategory?.brand_id;
@@ -194,6 +183,7 @@ function Category() {
       growth: stats?.growth ?? null,
     }));
   }, [orderedCards, stats]);
+  
   return (
     <div className="px-5">
 
