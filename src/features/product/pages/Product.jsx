@@ -40,6 +40,10 @@ function Product() {
   // =========================================================
 
   const { dragEnabled } = useProductLayout();
+  const [filter,setFilter]=useState({
+    search:"",
+    status:""
+  });
 
   // =========================================================
   // Product Context
@@ -136,14 +140,31 @@ function Product() {
     isError,
   } = useGetAllProduct({
     page,
-    perPage
+    perPage,
+    search:filter.search,
+    status:filter.status,
   });
+    console.log("Category Filters:", {
+  page,
+  per_page: perPage,
+  search: filter.search,
+  status: filter.status,
+});
   const handleChange = (event,value)=>{
     if (isFetching) {
     return;
   }
     setPage(value);
   }
+
+  const handleFilter=(newFilter)=>{
+    setFilter({
+      search:newFilter?.search??"",
+      status:newFilter?.status??""
+    })
+    setPage(1);
+  }
+  
   // =========================================================
   // Get Categories
   // =========================================================
@@ -271,7 +292,9 @@ const displayCards = useMemo(() => {
 
         <div>
 
-          <ProductFilter />
+          <ProductFilter
+            onFilter={handleFilter}
+          />
 
           {/* =================================================
               PRODUCT TABLE

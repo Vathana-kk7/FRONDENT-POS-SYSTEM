@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import ProductService from "../service/ProductService";
 
-export default function useGetAllProduct({page=1,perPage=10}={}){
+export default function useGetAllProduct({page=1,perPage=10,search="",status=""}={}){
     const query=useQuery({
-        queryKey:["product", page, perPage],
+        queryKey:["product", page, perPage,search,status],
         queryFn: ()=>
         ProductService.GetAllProduct({
-            params: { page, per_page: perPage, },
+            params: { page, per_page: perPage,search,status },
         }) ,
         staleTime:0
     });
