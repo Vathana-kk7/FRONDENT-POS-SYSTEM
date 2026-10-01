@@ -33,6 +33,7 @@ import useGetAllCategory from "../../category/hook/useGetAllCategory";
 import useEditeProduct from "../hook/useEditeProduct";
 import useDeleteProduct from "../hook/useDeleteProduct";
 import useProductState from "../hook/useProductState";
+import ProductExport from "../components/ProductExport";
 
 function Product() {
   // =========================================================
@@ -144,12 +145,6 @@ function Product() {
     search:filter.search,
     status:filter.status,
   });
-    console.log("Category Filters:", {
-  page,
-  per_page: perPage,
-  search: filter.search,
-  status: filter.status,
-});
   const handleChange = (event,value)=>{
     if (isFetching) {
     return;
@@ -243,7 +238,7 @@ const displayCards = useMemo(() => {
 
             {/* Import Product */}
             <ProductImport />
-
+            <ProductExport filter={filter}/>
           </div>
         </div>
 

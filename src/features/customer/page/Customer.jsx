@@ -12,6 +12,7 @@ import { useCustomer } from '../../../context/CustomerContext';
 import DeleteModal from '../../../components/common/Delete';
 import ModelCustomer from '../components/ModelCustomer';
 import EditeCustomer from '../components/EditeCustomer';
+import { customers } from '../data/Customerdata';
 
 function Customer() {
     // ==============================
@@ -294,6 +295,7 @@ function Customer() {
         <CustomerFilter/>
 
         <CustomerTable
+        customers={customers}
           onView={openView}
           onEdit={openEdit}
           onDelete={openDelete}

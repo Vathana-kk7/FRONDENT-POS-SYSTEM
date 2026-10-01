@@ -136,3 +136,41 @@ export const Customerdata = [
     icon: DollarSign,
   },
 ];
+export const customers = [
+  {
+    id: 1,
+    name: "vathana",
+    email: "vathana@example.com",
+    phone: "093261416",
+    group: "VIP",
+    totalSales: "1,250.00",
+    status: "Active"
+  },
+  {
+    id: 2,
+    name: "Srey Pov",
+    email: "sreypov@example.com",
+    phone: "012345678",
+    group: "Standard",
+    totalSales: "450.00",
+    status: "Active"
+  },
+  {
+    id: 3,
+    name: "Dara Smith",
+    email: "dara.smith@example.com",
+    phone: "098765432",
+    group: "Wholesale",
+    totalSales: "3,100.00",
+    status: "Active"
+  },
+  {
+    id: 4,
+    name: "Chan Thy",
+    email: "chanthy@example.com",
+    phone: "011223344",
+    group: "Standard",
+    totalSales: "0.00",
+    status: "Inactive"
+  }
+];

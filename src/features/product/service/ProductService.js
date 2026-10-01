@@ -75,7 +75,24 @@ const ProductService = {
     } catch (error) {
       throw error;
     }
-  }
+  },
+
+  async exportProduct(type = "excel", filter = {}) {
+    const response = await privateApi.get(
+      `/product/export/${type}`,
+      {
+        params: filter,
+        responseType: "blob",
+      }
+    );
+
+    return response;
+  },
+
+export(type = "excel", filter = {}) {
+  return this.exportProduct(type, filter);
+},
+ 
 };
 
 export default ProductService;
