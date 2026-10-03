@@ -78,6 +78,7 @@ function CustomerTable({
   Customer = [],
   isLoading = false,
   visibleColumns = DEFAULT_VISIBLE_COLUMNS,
+  startIndex = 0,
 }) {
   const {
     openView,
@@ -184,10 +185,10 @@ function CustomerTable({
 
   return (
     <div className="w-full min-w-0">
-      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="h-[650px] overflow-auto rounded-xl border border-gray-200 bg-white shadow-sm scrollbar-none">
         <table className="w-full min-w-[750px] border-collapse text-left text-sm">
           {/* Table header */}
-          <thead>
+          <thead className="sticky top-0 z-10">
             <tr className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
               <th className="w-16 whitespace-nowrap px-5 py-4">
                 No.
@@ -246,11 +247,11 @@ function CustomerTable({
             ) : (
               Customer.map((customer, index) => (
                 <tr
-                  key={customer?.id ?? index}
+                  key={customer?.id ?? startIndex + index}
                   className="transition-colors hover:bg-blue-50/40"
                 >
                   <td className="px-5 py-4 font-medium tabular-nums text-gray-500">
-                    {index + 1}
+                    {startIndex + index + 1}
                   </td>
 
                   <td className="px-5 py-4">

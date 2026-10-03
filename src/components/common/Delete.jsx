@@ -19,6 +19,7 @@ function DeleteModal({
         <button
           type="button"
           onClick={onClose}
+          disabled={isDeleting}
           className="
             absolute right-4 top-4
             flex h-9 w-9
@@ -29,6 +30,8 @@ function DeleteModal({
             hover:text-gray-700
             transition
             cursor-pointer
+            disabled:cursor-not-allowed
+            disabled:opacity-50
           "
         >
           <X size={20} />
@@ -119,6 +122,7 @@ function DeleteModal({
           <button
             type="button"
             onClick={onConfirm}
+            disabled={isDeleting}
             className="
               flex-1
               flex
@@ -134,6 +138,8 @@ function DeleteModal({
               active:bg-red-700
               transition
               cursor-pointer
+              disabled:cursor-not-allowed
+              disabled:opacity-60
             "
           >
             <Trash2 size={18} />

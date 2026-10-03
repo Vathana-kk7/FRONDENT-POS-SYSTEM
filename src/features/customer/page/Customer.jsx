@@ -1,5 +1,5 @@
-import { Download, File, FileSpreadsheet, FileText, Plus } from 'lucide-react'
-import React, { useState } from 'react'
+import { Download, FileSpreadsheet, FileText, Plus } from 'lucide-react'
+import React, { useRef, useState } from 'react'
 import SortableCard from '../components/SortableCard';
 import { closestCenter, DndContext } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
@@ -13,9 +13,22 @@ import DeleteModal from '../../../components/common/Delete';
 import ModelCustomer from '../components/ModelCustomer';
 import EditeCustomer from '../components/EditeCustomer';
 import useGetAllCustomer from '../hook/useGetAllCustomer';
+import useGetCustomerStats from '../hook/useGetCustomerStats';
+import useCustomerImport from '../hook/useCustomerImport';
 import useCreateCustomer from '../hook/useCreateCustomer';
+import useEditeCustomers from '../hook/useEditeCustomers';
+import useDeleteCustomer from '../hook/useDeleteCustomer';
+import { showToast } from '../../../utils/toast';
+import CustomerService from '../service/CustomerService';
 
 function Customer() {
+    const [page, setPage] = useState(1);
+    const perPage = 10;
+    const [filters, setFilters] = useState({
+      search: '',
+      status: '',
+    });
+
     // ==============================
     // Category Layout
     // ==============================
@@ -46,7 +59,11 @@ function Customer() {
       }
     }
     const [isImportOpen, setIsImportOpen] = useState(false);
+    const [isExportOpen, setIsExportOpen] = useState(false);
+    const [isExporting, setIsExporting] = useState(false);
+    const fileInputRef = useRef(null);
     const [cards, setCards] = useState(Customerdata);
+    const { mutate: importCustomers, isPending: isImporting } = useCustomerImport();
     const {
         isAddOpen,
         isDeleteOpen,
@@ -65,16 +82,106 @@ function Customer() {
 
   const {
     Customer=[],
+    currentPage,
+    lastPage,
+    total,
+    from,
+    to,
     isLoading,
     isFetching,
     isError,
-  }=useGetAllCustomer();
+  }=useGetAllCustomer({
+    page,
+    perPage,
+    search: filters.search,
+    status: filters.status,
+  });
+  const {
+    data: customerStats,
+    isLoading: isStatsLoading,
+    isError: isStatsError,
+    error: statsError,
+  } = useGetCustomerStats();
+
+  const handleFilter = (nextFilters) => {
+    setFilters(nextFilters);
+    setPage(1);
+  };
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const handleImportFile = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file) return;
+
+    if (!/\.(xlsx|xls)$/i.test(file.name)) {
+      showToast('Choose an Excel workbook (.xlsx or .xls).', 'error');
+      return;
+    }
+
+    importCustomers(file, {
+      onSuccess: () => setIsImportOpen(false),
+    });
+  };
+
+  const handleExport = async (type) => {
+    setIsExportOpen(false);
+    setIsExporting(true);
+
+    try {
+      const response = await CustomerService.exportCustomers(type, filters);
+      const blobUrl = window.URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      const date = new Date().toISOString().slice(0, 10);
+
+      link.href = blobUrl;
+      link.download = `customers_${date}.${type === 'excel' ? 'xlsx' : 'pdf'}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(blobUrl);
+      showToast(`Customer ${type.toUpperCase()} exported successfully.`, 'success');
+    } catch (error) {
+      console.error(`Customer ${type} export failed:`, error);
+      showToast(
+        error?.response?.data?.message || `Customer ${type} export failed.`,
+        'error'
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const statsByCardId = {
+    1: customerStats?.total_customers,
+    2: customerStats?.active_customers,
+    3: customerStats?.inactive_customers,
+    4: customerStats?.total_sales,
+  };
+  const formatTotalSales = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
   const {
     createCustomerAsync,
     isPending,
     isSuccess,
   }=useCreateCustomer();
+
+  const {
+    mutateAsync: editCustomer,
+    isPending: isEditing,
+  } = useEditeCustomers();
+
+  const {
+    mutate: deleteCustomer,
+    isPending: isDeleting,
+  } = useDeleteCustomer();
   // ==============================
 // Customer Table Column Visibility
 // ==============================
@@ -133,6 +240,9 @@ const toggleColumn = (columnKey) => {
               onClick={() =>
                 setIsImportOpen(!isImportOpen)
               }
+              disabled={isImporting}
+              aria-expanded={isImportOpen}
+              aria-haspopup="true"
               className="
                 bg-white
                 flex
@@ -154,7 +264,7 @@ const toggleColumn = (columnKey) => {
               <Download size={20} />
 
               <span className="ms-2">
-                Import
+                {isImporting ? 'Importing...' : 'Import'}
               </span>
 
             </button>
@@ -179,93 +289,72 @@ const toggleColumn = (columnKey) => {
                   p-2
                 "
               >
-
-                {/* PDF */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-red-50
-                  "
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+                  onChange={handleImportFile}
+                  className="hidden"
+                  aria-label="Choose customer Excel file"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isImporting}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-
-                  <FileText
-                    size={20}
-                    className="text-red-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    PDF File
-                  </span>
-
-                </div>
-
-
-                {/* DOC */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-blue-50
-                  "
-                >
-
-                  <File
-                    size={20}
-                    className="text-blue-500"
-                  />
-
-                  <span className="font-medium text-gray-700">
-                    DOC File
-                  </span>
-
-                </div>
-
-
-                {/* Excel */}
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-3
-                    px-3
-                    py-3
-                    rounded-lg
-                    cursor-pointer
-                    hover:bg-green-50
-                  "
-                >
-
                   <FileSpreadsheet
                     size={20}
                     className="text-green-600"
                   />
-
                   <span className="font-medium text-gray-700">
-                    Excel File
+                    Excel file
                   </span>
-
-                </div>
-
+                </button>
+                <p className="px-3 pb-2 text-xs text-gray-500">
+                  Excel only (.xlsx, .xls). Columns: name, phone, email, address, group, status.
+                </p>
               </div>
 
             )}
 
           </div>
-
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setIsExportOpen((open) => !open)}
+            disabled={isExporting}
+            aria-expanded={isExportOpen}
+            aria-haspopup="true"
+            className="flex h-11 w-40 items-center justify-center rounded-xl border border-gray-200 bg-white text-black shadow-lg transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Download size={20} />
+            <span className="ms-2">{isExporting ? 'Exporting...' : 'Export'}</span>
+          </button>
+          {isExportOpen && (
+            <div className="absolute right-0 top-14 z-50 w-48 rounded-xl border border-gray-200 bg-white p-2 shadow-xl">
+              <button
+                type="button"
+                onClick={() => handleExport('excel')}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition hover:bg-green-50"
+              >
+                <FileSpreadsheet size={20} className="text-green-600" />
+                <span className="font-medium text-gray-700">Excel file</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleExport('pdf')}
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition hover:bg-red-50"
+              >
+                <FileText size={20} className="text-red-500" />
+                <span className="font-medium text-gray-700">PDF file</span>
+              </button>
+              <p className="px-3 pb-2 text-xs text-gray-500">
+                Exports all customers matching the applied filters.
+              </p>
+            </div>
+          )}
+        </div>
         </div>
       </div>
       {/* ================================= */}
@@ -293,24 +382,44 @@ const toggleColumn = (columnKey) => {
             "
           >
 
-            {cards.map((card) => (
+            {cards.map((card) => {
+              const value = statsByCardId[card.id];
+              const displayCard = {
+                ...card,
+                value: isStatsError
+                  ? 'Unavailable'
+                  : isStatsLoading
+                    ? 'Loading...'
+                    : card.id === 4
+                      ? formatTotalSales.format(Number(value) || 0)
+                      : Number(value) || 0,
+              };
 
-              <SortableCard
-                key={card.id}
-                card={card}
-                disabled={!drages}
-              />
-
-            ))}
+              return (
+                <SortableCard
+                  key={card.id}
+                  card={displayCard}
+                  disabled={!drages}
+                />
+              );
+            })}
 
           </div>
 
         </SortableContext>
 
       </DndContext>
+      {isStatsError && (
+        <p role="alert" className="mt-3 text-sm text-red-600">
+          {statsError?.response?.data?.message ||
+            statsError?.message ||
+            'Unable to load customer statistics.'}
+        </p>
+      )}
       <div className="w-full h-full mt-5">
 
         <CustomerFilter
+            onFilter={handleFilter}
             visibleColumns={visibleColumns}
             toggleColumn={toggleColumn}
           />
@@ -318,20 +427,36 @@ const toggleColumn = (columnKey) => {
         <CustomerTable
             isLoading={isLoading}
             Customer={Customer}
+            startIndex={from > 0 ? from - 1 : (page - 1) * perPage}
             visibleColumns={visibleColumns}
             onView={openView}
             onEdit={openEdit}
             onDelete={openDelete}
           />
         <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
-          <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
-          <CustomerPagination />
+          <h1 className="font-simbold text-gray-600">
+            Showing {from} to {to} of {total} customers
+          </h1>
+          <CustomerPagination
+            currentPage={currentPage}
+            lastPage={lastPage}
+            onChange={handlePageChange}
+          />
         </div>
       </div>
 
       {/* ================================= */}
       {/* Add Category */}
       {/* ================================= */}
+
+      {isEditOpen && selectedCategory && (
+        <EditeCustomer
+          selectedCustomer={selectedCategory}
+          onClose={closeEdit}
+          editCustomer={editCustomer}
+          isPending={isEditing}
+        />
+      )}
 
       {isAddOpen && (
 
@@ -352,20 +477,16 @@ const toggleColumn = (columnKey) => {
       {isDeleteOpen && (
 
         <DeleteModal
+          isDeleting={isDeleting}
           item={selectedCategory}
-          title="Delete Category?"
-          message="Are you sure you want to delete this category?"
+          title="Delete Customer?"
+          message="Are you sure you want to delete this customer? This action cannot be undone."
           onClose={closeDelete}
-          onConfirm={() => {
-
-            console.log(
-              "Delete category:",
-              selectedCategory
-            );
-
-            closeDelete();
-
-          }}
+          onConfirm={() =>
+            deleteCustomer(selectedCategory.id, {
+              onSuccess: closeDelete,
+            })
+          }
         />
 
       )}

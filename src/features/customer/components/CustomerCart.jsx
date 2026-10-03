@@ -1,5 +1,3 @@
-import { ArrowUp } from "lucide-react";
-
 function CustomerCart({ card }) {
 
   // Safety check
@@ -62,19 +60,6 @@ function CustomerCart({ card }) {
         <p className="text-2xl font-bold text-blue-800">
           {card.value}
         </p>
-
-        <div className="flex items-center gap-1 mt-1">
-
-          <ArrowUp
-            size={16}
-            className="text-green-500"
-          />
-
-          <span className="text-sm text-green-500">
-            {card.growth} This month
-          </span>
-
-        </div>
 
       </div>
 

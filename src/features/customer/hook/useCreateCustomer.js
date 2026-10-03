@@ -11,6 +11,9 @@ export default function useCreateCustomer(){
                 queryKey:["customers"],
                 exact:false
             })
+            await queryClient.invalidateQueries({
+                queryKey:["customer-stats"],
+            })
             showToast("បង្កើត Customers ថ្មីបានជោគជ័យ!", "success");
         }
 

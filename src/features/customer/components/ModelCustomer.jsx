@@ -33,7 +33,7 @@ function ModelCustomer({
       }
 
       await createCustomer(data);
-
+      onClose(); // Close the modal after successful submission
       // Reset the form for Save & New.
       reset({
         name: "",
