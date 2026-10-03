@@ -12,13 +12,13 @@ import { useCustomer } from '../../../context/CustomerContext';
 import DeleteModal from '../../../components/common/Delete';
 import ModelCustomer from '../components/ModelCustomer';
 import EditeCustomer from '../components/EditeCustomer';
-import { customers } from '../data/Customerdata';
+import useGetAllCustomer from '../hook/useGetAllCustomer';
+import useCreateCustomer from '../hook/useCreateCustomer';
 
 function Customer() {
     // ==============================
     // Category Layout
     // ==============================
-  
     const { drages, setDrages } = useCustomerLayout();
     function handleDragEnd(event) {
   
@@ -52,32 +52,57 @@ function Customer() {
         isDeleteOpen,
         isViewOpen,
         isEditOpen,
-    
         selectedCategory,
-    
         openAdd,
         openView,
         openEdit,
         openDelete,
-    
         closeAdd,
         closeView,
         closeEdit,
         closeDelete,
       } = useCustomer();
+
+  const {
+    Customer=[],
+    isLoading,
+    isFetching,
+    isError,
+  }=useGetAllCustomer();
+
+  const {
+    createCustomerAsync,
+    isPending,
+    isSuccess,
+  }=useCreateCustomer();
+  // ==============================
+// Customer Table Column Visibility
+// ==============================
+const [visibleColumns, setVisibleColumns] = useState({
+  email: true,
+  phone: true,
+  address: true,
+  group: true,
+  totalSales: true,
+  status: true,
+});
+
+// Toggle individual column
+const toggleColumn = (columnKey) => {
+  setVisibleColumns((previous) => ({
+    ...previous,
+    [columnKey]: previous[columnKey] === false,
+  }));
+};
   return (
     <div className="px-5">
        <div className="flex justify-between">
-
         <h1 className="text-xl font-medium">
-          Categories
+          Customers
         </h1>
-
       {/* Header */}
         <div className="flex gap-3">
-
           {/* Add Category */}
-
           <button
             type="button"
             onClick={openAdd}
@@ -96,20 +121,13 @@ function Customer() {
               cursor-pointer
             "
           >
-
             <Plus size={20} />
-
             <span className="ms-2">
               Add Customer
             </span>
-
           </button>
-
-
           {/* Import */}
-
           <div className="relative">
-
             <button
               type="button"
               onClick={() =>
@@ -290,35 +308,26 @@ function Customer() {
         </SortableContext>
 
       </DndContext>
-      <div className="w-full h-full bg-white shadow-lg mt-5">
+      <div className="w-full h-full mt-5">
 
-        <CustomerFilter/>
+        <CustomerFilter
+            visibleColumns={visibleColumns}
+            toggleColumn={toggleColumn}
+          />
 
         <CustomerTable
-        customers={customers}
-          onView={openView}
-          onEdit={openEdit}
-          onDelete={openDelete}
-        />
+            isLoading={isLoading}
+            Customer={Customer}
+            visibleColumns={visibleColumns}
+            onView={openView}
+            onEdit={openEdit}
+            onDelete={openDelete}
+          />
         <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
           <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
           <CustomerPagination />
         </div>
       </div>
-
-      {/* ================================= */}
-      {/* Edit Category */}
-      {/* ================================= */}
-
-      {isEditOpen && (
-
-        <EditeCustomer
-          category={selectedCategory}
-          closeEdit={closeEdit}
-        />
-
-      )}
-
 
       {/* ================================= */}
       {/* Add Category */}
@@ -328,6 +337,9 @@ function Customer() {
 
         <ModelCustomer
           onClose={closeAdd}
+          createCustomer={createCustomerAsync}
+          isPending={isPending}
+          selectedCategory={selectedCategory}
         />
 
       )}

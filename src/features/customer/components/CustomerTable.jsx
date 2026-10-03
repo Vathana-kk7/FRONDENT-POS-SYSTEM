@@ -1,107 +1,308 @@
 import React from 'react';
-import { Eye, SquarePen, Trash2 } from 'lucide-react';
+import {
+  Eye,
+  SquarePen,
+  Trash2,
+  Users,
+} from 'lucide-react';
+
 import { useCustomer } from '../../../context/CustomerContext';
 
-const GRID = 'grid grid-cols-[48px_1.4fr_1.6fr_1fr_1fr_1fr_1fr_140px] items-center gap-4 px-6';
+const DEFAULT_VISIBLE_COLUMNS = {
+  email: true,
+  phone: true,
+  address: true,
+  group: true,
+  totalSales: true,
+  status: true,
+};
 
 const formatMoney = (value) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value) || 0);
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(Number(value) || 0);
 
-function ActionButton({ label, onClick, icon: Icon, iconClass }) {
+function ActionButton({
+  label,
+  onClick,
+  icon: Icon,
+  iconClass,
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-300 transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white transition hover:border-gray-300 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
     >
-      <Icon className={iconClass} size={18} />
+      <Icon className={iconClass} size={17} />
     </button>
   );
 }
 
-function CustomerTable({ customers = [] }) {
-  const { openView, openEdit, openDelete } = useCustomer();
+function CustomerSkeleton({ count = 6, columnCount = 9 }) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, rowIndex) => (
+        <tr
+          key={rowIndex}
+          className="animate-pulse border-b border-gray-100"
+        >
+          {Array.from({ length: columnCount }).map(
+            (_, columnIndex) => (
+              <td
+                key={columnIndex}
+                className="px-5 py-4"
+              >
+                <div
+                  className={`h-4 rounded bg-gray-200 ${
+                    columnIndex === columnCount - 1
+                      ? 'ml-auto w-24'
+                      : columnIndex === 0
+                        ? 'w-6'
+                        : 'w-24 max-w-full'
+                  }`}
+                />
+              </td>
+            )
+          )}
+        </tr>
+      ))}
+    </>
+  );
+}
+
+function CustomerTable({
+  Customer = [],
+  isLoading = false,
+  visibleColumns = DEFAULT_VISIBLE_COLUMNS,
+}) {
+  const {
+    openView,
+    openEdit,
+    openDelete,
+  } = useCustomer();
+
+  // Always normalize column visibility.
+  const columns = {
+    ...DEFAULT_VISIBLE_COLUMNS,
+    ...visibleColumns,
+  };
+
+  const isVisible = (key) => columns[key] !== false;
+
+  // Build the visible column list once.
+  const optionalColumns = [
+    {
+      key: 'email',
+      label: 'Email',
+      render: (customer) => (
+        <span
+          className="block max-w-[200px] truncate text-gray-500"
+          title={customer?.email || ''}
+        >
+          {customer?.email || 'N/A'}
+        </span>
+      ),
+    },
+    {
+      key: 'phone',
+      label: 'Phone',
+      render: (customer) => (
+        <span className="whitespace-nowrap text-gray-600">
+          {customer?.phone || 'N/A'}
+        </span>
+      ),
+    },
+    {
+      key: 'address',
+      label: 'Address',
+      render: (customer) => (
+        <span
+          className="block max-w-[200px] truncate text-gray-600"
+          title={customer?.address || ''}
+        >
+          {customer?.address || 'N/A'}
+        </span>
+      ),
+    },
+    {
+      key: 'group',
+      label: 'Group',
+      render: (customer) => (
+        <span className="inline-flex whitespace-nowrap rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 ring-1 ring-inset ring-blue-100">
+          {customer?.group || 'Standard'}
+        </span>
+      ),
+    },
+    {
+      key: 'totalSales',
+      label: 'Total sales',
+      render: (customer) => (
+        <span className="whitespace-nowrap font-semibold tabular-nums text-gray-700">
+          {formatMoney(customer?.totalSales)}
+        </span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (customer) => {
+        const inactive =
+          String(customer?.status || 'Active').toLowerCase() ===
+          'inactive';
+
+        return (
+          <span
+            className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${
+              inactive
+                ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-200'
+                : 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-200'
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                inactive ? 'bg-red-500' : 'bg-green-500'
+              }`}
+            />
+
+            {customer?.status || 'Active'}
+          </span>
+        );
+      },
+    },
+  ];
+
+  const visibleOptionalColumns = optionalColumns.filter(
+    (column) => isVisible(column.key)
+  );
+
+  // No + Customer name + visible optional columns + Actions.
+  const columnCount = 3 + visibleOptionalColumns.length;
 
   return (
-    <div className="overflow-x-auto">
-      <div className="min-w-[1000px]" role="table" aria-label="Customers">
-        {/* Header */}
-        <div
-          role="row"
-          className={`${GRID} h-[50px] border border-gray-200 bg-gray-100 font-medium text-gray-900`}
-        >
-          <div role="columnheader">No</div>
-          <div role="columnheader">Customer name</div>
-          <div role="columnheader">Email</div>
-          <div role="columnheader">Phone</div>
-          <div role="columnheader">Group</div>
-          <div role="columnheader">Total sales</div>
-          <div role="columnheader">Status</div>
-          <div role="columnheader" className="text-right pr-10">Actions</div>
-        </div>
+    <div className="w-full min-w-0">
+      <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+        <table className="w-full min-w-[750px] border-collapse text-left text-sm">
+          {/* Table header */}
+          <thead>
+            <tr className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
+              <th className="w-16 whitespace-nowrap px-5 py-4">
+                No.
+              </th>
 
-        {/* Body */}
-        <div className="h-[450px] overflow-y-auto scrollbar-none">
-          {customers.length === 0 ? (
-            <div className="flex h-full items-center justify-center text-gray-500">
-              No customers yet. Add a customer to see them here.
-            </div>
-          ) : (
-            customers.map((customer, index) => {
-              const isInactive = customer.status === 'Inactive';
-              return (
-                <div
-                  role="row"
-                  key={customer.id ?? index}
-                  className={`${GRID} min-h-[80px] border-b border-gray-200 bg-gray-50 transition-colors hover:bg-gray-200`}
+              <th className="min-w-[180px] whitespace-nowrap px-5 py-4">
+                Customer name
+              </th>
+
+              {visibleOptionalColumns.map((column) => (
+                <th
+                  key={column.key}
+                  className="whitespace-nowrap px-5 py-4"
                 >
-                  <div role="cell" className="font-semibold text-gray-900">{index + 1}</div>
+                  {column.label}
+                </th>
+              ))}
 
-                  <div role="cell" className="truncate font-semibold text-gray-900" title={customer.name}>
-                    {customer.name}
+              <th className="w-[150px] whitespace-nowrap px-5 py-4 text-right">
+                Actions
+              </th>
+            </tr>
+          </thead>
+
+          {/* Table body */}
+          <tbody className="divide-y divide-gray-100">
+            {isLoading ? (
+              <CustomerSkeleton
+                count={6}
+                columnCount={columnCount}
+              />
+            ) : Customer.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columnCount}
+                  className="px-5 py-16 text-center"
+                >
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                      <Users
+                        size={22}
+                        className="text-gray-400"
+                      />
+                    </div>
+
+                    <p className="font-semibold text-gray-800">
+                      No customers found
+                    </p>
+
+                    <p className="mt-1 text-sm text-gray-500">
+                      Add a customer or adjust your search filters.
+                    </p>
                   </div>
+                </td>
+              </tr>
+            ) : (
+              Customer.map((customer, index) => (
+                <tr
+                  key={customer?.id ?? index}
+                  className="transition-colors hover:bg-blue-50/40"
+                >
+                  <td className="px-5 py-4 font-medium tabular-nums text-gray-500">
+                    {index + 1}
+                  </td>
 
-                  <div role="cell" className="truncate text-sm text-gray-500" title={customer.email}>
-                    {customer.email || 'N/A'}
-                  </div>
-
-                  <div role="cell" className="truncate font-semibold text-gray-600">
-                    {customer.phone || 'N/A'}
-                  </div>
-
-                  <div role="cell">
-                    <span className="inline-flex items-center rounded-md bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">
-                      {customer.group || 'Standard'}
-                    </span>
-                  </div>
-
-                  <div role="cell" className="font-semibold tabular-nums text-gray-600">
-                    {formatMoney(customer.totalSales)}
-                  </div>
-
-                  <div role="cell">
-                    <span
-                      className={`inline-flex items-center rounded-md px-3 py-1 text-sm font-semibold ${
-                        isInactive ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                      }`}
+                  <td className="px-5 py-4">
+                    <div
+                      className="max-w-[220px] truncate font-semibold text-gray-900"
+                      title={customer?.name || ''}
                     >
-                      {customer.status || 'Active'}
-                    </span>
-                  </div>
+                      {customer?.name || 'N/A'}
+                    </div>
+                  </td>
 
-                  <div role="cell" className="flex items-center justify-end gap-3">
-                    <ActionButton label="View customer" onClick={() => openView(customer)} icon={Eye} iconClass="text-blue-500" />
-                    <ActionButton label="Edit customer" onClick={() => openEdit(customer)} icon={SquarePen} iconClass="text-yellow-500" />
-                    <ActionButton label="Delete customer" onClick={() => openDelete(customer)} icon={Trash2} iconClass="text-red-500" />
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                  {visibleOptionalColumns.map((column) => (
+                    <td
+                      key={column.key}
+                      className="px-5 py-4"
+                    >
+                      {column.render(customer)}
+                    </td>
+                  ))}
+
+                  <td className="px-5 py-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <ActionButton
+                        label="View customer"
+                        onClick={() => openView(customer)}
+                        icon={Eye}
+                        iconClass="text-blue-600"
+                      />
+
+                      <ActionButton
+                        label="Edit customer"
+                        onClick={() => openEdit(customer)}
+                        icon={SquarePen}
+                        iconClass="text-amber-600"
+                      />
+
+                      <ActionButton
+                        label="Delete customer"
+                        onClick={() => openDelete(customer)}
+                        icon={Trash2}
+                        iconClass="text-red-600"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
+
+     
     </div>
   );
 }
