@@ -1,0 +1,46 @@
+import privateApi from '../../../../services/api/privateApi'
+
+const PurchaseService = {
+
+    // Get all purchases
+    getAll: async () => {
+        const response = await privateApi.get('/purchase');
+        return response.data;
+    },
+
+    // Get purchase by ID
+    getById: async (id) => {
+        const response = await privateApi.get(`/purchase/${id}`);
+        return response.data;
+    },
+
+    // Create purchase
+    create: async (data) => {
+        const response = await privateApi.post('/purchase', data);
+        return response.data;
+    },
+
+    // Update purchase
+    update: async (id, data) => {
+        const response = await privateApi.put(`/purchase/${id}`, data);
+        return response.data;
+    },
+
+    // Delete purchase
+    delete: async (id) => {
+        const response = await privateApi.delete(`/purchase/${id}`);
+        return response.data;
+    },
+
+    // Receive stock
+    receiveStock: async (id, data) => {
+        const response = await privateApi.post(
+            `/purchase/${id}/receive`,
+            data
+        );
+
+        return response.data;
+    },
+};
+
+export default PurchaseService;

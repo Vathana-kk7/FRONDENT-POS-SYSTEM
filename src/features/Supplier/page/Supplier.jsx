@@ -13,6 +13,7 @@ import { DndContext, closestCenter } from "@dnd-kit/core";
 import { arrayMove, rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
 import { useSupplierLayout } from "../../../context/SupplierLayoutContext";
 import { showToast } from "../../../utils/toast";
+import DeleteModal from "../../../components/common/Delete";
 import SupplierFormModal from "../components/SupplierFormModal";
 import SupplierPagination from "../components/SupplierPagination";
 import SupplierTable from "../components/SupplierTable";
@@ -38,6 +39,7 @@ export default function Supplier() {
   const [isMoreActionsOpen, setIsMoreActionsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [dialog, setDialog] = useState(null);
+  const [supplierToDelete, setSupplierToDelete] = useState(null);
   const fileInputRef = useRef(null);
   const moreActionsRef = useRef(null);
 
@@ -162,10 +164,15 @@ export default function Supplier() {
     }
   };
 
-  const handleDelete = async (supplier) => {
-    if (!window.confirm(`Delete supplier "${supplier.name}"?`)) return;
+  const handleDelete = (supplier) => {
+    setSupplierToDelete(supplier);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!supplierToDelete?.id) return;
     try {
-      await deleteSupplier(supplier.id);
+      await deleteSupplier(supplierToDelete.id);
+      setSupplierToDelete(null);
     } catch {
       // The mutation hook displays the API error.
     }
@@ -374,6 +381,17 @@ export default function Supplier() {
           onClose={() => setDialog(null)}
           onSubmit={handleDialogSubmit}
           isPending={isCreating || isEditing}
+        />
+      )}
+
+      {supplierToDelete && (
+        <DeleteModal
+          isDeleting={isDeleting}
+          item={supplierToDelete}
+          title="Delete Supplier?"
+          message="Are you sure you want to delete this supplier? This action cannot be undone."
+          onClose={() => setSupplierToDelete(null)}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>
