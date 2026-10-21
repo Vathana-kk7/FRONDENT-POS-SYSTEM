@@ -20,9 +20,9 @@ import {
 
 import Swal from "sweetalert2";
 
-import { products } from "../../../product/data/ProductCate";
+import useGetAllProduct from "../../../product/hook/useGetAllProduct";
+import useGetAllSupplier from "../../../Supplier/hook/useGetAllSupplier";
 
-import { PurchaseTable } from "../data/Purchasedata";
 import useCreatePurchaseOrder from "../hook/useCreatePurchaseOrder";
 
 /*
@@ -70,6 +70,58 @@ function formatCurrency(amount) {
   })}`;
 }
 
+function getProductImageUrl(image) {
+  if (!image || typeof image !== "string") {
+    return "";
+  }
+
+  const imagePath = image.trim();
+
+  if (
+    /^(https?:)?\/\//i.test(imagePath) ||
+    /^(data|blob):/i.test(imagePath)
+  ) {
+    return imagePath;
+  }
+
+  const backendOrigin = new URL(
+    import.meta.env.VITE_API_URL || "/api",
+    window.location.origin
+  ).origin;
+  const storagePath = imagePath
+    .replace(/^\/+/, "")
+    .replace(/^storage\//i, "");
+
+  return new URL(
+    `/storage/${storagePath}`,
+    backendOrigin
+  ).toString();
+}
+
+function ProductThumbnail({ image, name }) {
+  const [hasError, setHasError] = useState(false);
+  const imageUrl = getProductImageUrl(image);
+
+  return (
+    <div className="flex h-8 w-9 shrink-0 items-center justify-center overflow-hidden rounded border border-slate-200 bg-slate-100">
+      {imageUrl && !hasError ? (
+        <img
+          src={imageUrl}
+          alt={name}
+          className="h-full w-full object-cover"
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <Package
+          size={14}
+          className="text-slate-400"
+          aria-label="No product image"
+        />
+      )}
+    </div>
+  );
+}
+
 /*
 |--------------------------------------------------------------------------
 | Component
@@ -90,6 +142,24 @@ function AddPurchaseOrderModal({
     mutateAsync: createPurchase,
     isPending,
   } = useCreatePurchaseOrder();
+
+  const {
+    product: products,
+    isLoading: isProductsLoading,
+    isError: isProductsError,
+  } = useGetAllProduct({
+    page: 1,
+    perPage: 100,
+  });
+
+  const {
+    suppliers,
+    isLoading: isSuppliersLoading,
+    isError: isSuppliersError,
+  } = useGetAllSupplier({
+    page: 1,
+    perPage: 100,
+  });
 
   /*
   |--------------------------------------------------------------------------
@@ -153,6 +223,37 @@ function AddPurchaseOrderModal({
   const searchInputRef =
     useRef(null);
 
+  const productSearchRef =
+    useRef(null);
+
+  useEffect(() => {
+    if (!showProducts) {
+      return undefined;
+    }
+
+    function handleOutsideClick(event) {
+      if (
+        !productSearchRef.current?.contains(
+          event.target
+        )
+      ) {
+        setShowProducts(false);
+      }
+    }
+
+    document.addEventListener(
+      "mousedown",
+      handleOutsideClick
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleOutsideClick
+      );
+    };
+  }, [showProducts]);
+
   /*
   |--------------------------------------------------------------------------
   | Close with ESC
@@ -181,44 +282,6 @@ function AddPurchaseOrderModal({
       );
     };
   }, [onClose, isPending]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | Supplier List
-  |--------------------------------------------------------------------------
-  |
-  | IMPORTANT:
-  | This is temporary using PurchaseTable.
-  | Later we should replace it with Supplier API.
-  |
-  */
-
-  const suppliers = useMemo(() => {
-    const map = new Map();
-
-    PurchaseTable.forEach(
-      (purchase) => {
-        const id =
-          purchase.supplierId ??
-          purchase.supplier_id;
-
-        const name =
-          purchase.supplierName ??
-          purchase.supplier_name;
-
-        if (id && name) {
-          map.set(id, {
-            id,
-            name,
-          });
-        }
-      }
-    );
-
-    return Array.from(
-      map.values()
-    );
-  }, []);
 
   /*
   |--------------------------------------------------------------------------
@@ -265,7 +328,7 @@ function AddPurchaseOrderModal({
           );
         }
       );
-    }, [items, search]);
+    }, [items, products, search]);
 
   /*
   |--------------------------------------------------------------------------
@@ -628,20 +691,11 @@ function AddPurchaseOrderModal({
       supplier_id:
         supplierId,
 
-      total:
-        Number(
-          grandTotal.toFixed(2)
-        ),
-
-      status:
-        status,
+      shipping_cost:
+        Number(shippingCost.toFixed(2)),
 
       payment_terms:
         paymentTerms,
-
-      reference_no:
-        reference.trim() ||
-        null,
 
       notes:
         [
@@ -677,12 +731,6 @@ function AddPurchaseOrderModal({
                 item.tax || 0
               );
 
-            const itemSubtotal =
-              quantity *
-                unitCost -
-              discount +
-              tax;
-
             return {
               product_id:
                 Number(
@@ -692,7 +740,7 @@ function AddPurchaseOrderModal({
               quantity:
                 quantity,
 
-              unit_cost:
+              cost_price:
                 unitCost,
 
               discount:
@@ -701,12 +749,6 @@ function AddPurchaseOrderModal({
               tax:
                 tax,
 
-              subtotal:
-                Number(
-                  itemSubtotal.toFixed(
-                    2
-                  )
-                ),
             };
           }
         ),
@@ -1015,6 +1057,10 @@ function AddPurchaseOrderModal({
                   value={
                     supplier
                   }
+                  disabled={
+                    isSuppliersLoading ||
+                    isSuppliersError
+                  }
                   onChange={(
                     event
                   ) =>
@@ -1027,7 +1073,11 @@ function AddPurchaseOrderModal({
                 >
 
                   <option value="">
-                    Select supplier
+                    {isSuppliersLoading
+                      ? "Loading suppliers..."
+                      : isSuppliersError
+                        ? "Unable to load suppliers"
+                        : "Select supplier"}
                   </option>
 
                   {suppliers.map(
@@ -1209,7 +1259,10 @@ function AddPurchaseOrderModal({
 
                 {/* SEARCH */}
 
-                <div className="relative">
+                <div
+                  ref={productSearchRef}
+                  className="relative"
+                >
 
                   <Search
                     size={13}
@@ -1251,7 +1304,15 @@ function AddPurchaseOrderModal({
                   {showProducts && (
                     <div className="absolute right-0 top-full z-20 mt-1 max-h-52 w-72 overflow-auto rounded-md border border-slate-200 bg-white py-1 shadow-lg">
 
-                      {filteredProducts.length >
+                      {isProductsLoading ? (
+                        <p className="px-3 py-2 text-xs text-slate-500">
+                          Loading products...
+                        </p>
+                      ) : isProductsError ? (
+                        <p className="px-3 py-2 text-xs text-red-600">
+                          Unable to load products.
+                        </p>
+                      ) : filteredProducts.length >
                       0 ? (
 
                         filteredProducts.map(
@@ -1330,6 +1391,10 @@ function AddPurchaseOrderModal({
                     searchInputRef.current?.focus();
 
                   }}
+                  disabled={
+                    isProductsLoading ||
+                    isProductsError
+                  }
                   className="flex items-center gap-1 rounded-md bg-blue-700 px-3 py-2 text-[11px] font-semibold text-white hover:bg-blue-800"
                 >
 
@@ -1440,30 +1505,10 @@ function AddPurchaseOrderModal({
 
                             <div className="flex items-center gap-2">
 
-                              {item.image ? (
-
-                                <img
-                                  src={
-                                    item.image
-                                  }
-                                  alt={
-                                    item.name
-                                  }
-                                  className="h-8 w-9 rounded border border-slate-200 object-cover"
-                                />
-
-                              ) : (
-
-                                <div className="flex h-8 w-9 items-center justify-center rounded border border-slate-200 bg-slate-100">
-                                  <Package
-                                    size={
-                                      14
-                                    }
-                                    className="text-slate-400"
-                                  />
-                                </div>
-
-                              )}
+                              <ProductThumbnail
+                                image={item.image}
+                                name={item.name}
+                              />
 
                               <span>
 
