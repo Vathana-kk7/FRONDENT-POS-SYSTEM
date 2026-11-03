@@ -17,7 +17,7 @@ function ProductTable({
   } = useProduct();
   //Table
   const [selectedProduct, setSelectedProduct] = useState(null);
-const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
 
 const handleView = (product) => {
   setSelectedProduct(product);

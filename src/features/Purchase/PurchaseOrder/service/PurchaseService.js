@@ -3,8 +3,10 @@ import privateApi from '../../../../services/api/privateApi'
 const PurchaseService = {
 
     // Get all purchases
-    getAll: async () => {
-        const response = await privateApi.get('/purchase');
+    getAll: async (search={}) => {
+        const response = await privateApi.get('/purchase',{
+            params:search,
+        });
         return response.data;
     },
 
@@ -41,6 +43,10 @@ const PurchaseService = {
 
         return response.data;
     },
+    getstate:async ()=>{
+        const response=await privateApi.get('/purchase/state');
+        return response.data;
+    }
 };
 
 export default PurchaseService;

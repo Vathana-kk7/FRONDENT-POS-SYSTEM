@@ -25,6 +25,7 @@ import { ReportLayoutProvider } from "../context/ReportLayoutContext";
 import { BrandProvider } from "../context/BrandContext";
 import { BrandLayoutProvider } from "../context/BrandLayoutContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PurchaseProvider } from "../context/PurchaseContext";
 
 
 const queryClient = new QueryClient();
@@ -46,23 +47,26 @@ createRoot(document.getElementById("root")).render(
                           <StockTransferHistoryLayoutProvider>
                             <UserAllLayoutProvider>
                               <UserRolesLayoutProvider>
-                                <SupplierLayoutProvider>
-                                  <ReportLayoutProvider>
-                                    <BrandLayoutProvider>
-                                      <ProductProvider>
-                                        <CategoryProvider>
-                                          <BrandProvider>
-                                            <SaleOrderProvider>
-                                              <QueryClientProvider client={queryClient}>
-                                                <App />
-                                              </QueryClientProvider>
-                                            </SaleOrderProvider>
-                                          </BrandProvider>
-                                        </CategoryProvider>
-                                      </ProductProvider>
-                                  </BrandLayoutProvider>
-                                  </ReportLayoutProvider>
-                                </SupplierLayoutProvider>
+                                <PurchaseProvider>
+                                  <SupplierLayoutProvider>
+                                    <ReportLayoutProvider>
+                                      <BrandLayoutProvider>
+                                          <ProductProvider>
+                                            <CategoryProvider>
+                                              <BrandProvider>
+                                                <SaleOrderProvider>
+                                                  <QueryClientProvider client={queryClient}>
+                                                    <App />
+                                                  </QueryClientProvider>
+                                                </SaleOrderProvider>
+                                              </BrandProvider>
+                                            </CategoryProvider>
+                                          </ProductProvider>
+                                      </BrandLayoutProvider>
+                                    </ReportLayoutProvider>
+                                  </SupplierLayoutProvider>
+                                </PurchaseProvider>
+                                
                               </UserRolesLayoutProvider>
                             </UserAllLayoutProvider>
                           </StockTransferHistoryLayoutProvider>
