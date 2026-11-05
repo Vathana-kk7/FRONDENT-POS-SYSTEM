@@ -32,6 +32,7 @@ import useDeletePurchaseOrder from "../hook/useDeletePurchaseOrder";
 import DeleteModal from "../../../../components/common/Delete";
 import useStatePurchaseOrder from "../hook/useStatePurchaseOrder";
 import ReceiveStockModal from "../components/ReceiveStockModal";
+import AddPurchasePaymentModal from "../components/AddPurchasePaymentModal";
 
 function PurchaseOrder() {
   const [cards, setCards] =useState(PurchaseCards);
@@ -193,6 +194,7 @@ const liveCards = cards.map((card) => {
   }
 });
 const [receivePurchase, setReceivePurchase] = useState(null);
+const [paymentPurchase, setPaymentPurchase] = useState(null);
 
   return (
     <div className="px-5">
@@ -369,14 +371,21 @@ const [receivePurchase, setReceivePurchase] = useState(null);
         onEdite={(purchase) => openEdit(purchase)} 
         onDelete={(purchase) => openDelete(purchase)}
         onView={(purchase) => openView(purchase)}
-        // onReceive={(p) => setReceivePurchase(p)}
+        onReceive={(purchase) => setReceivePurchase(purchase)}
+        onAddPayment={(purchase) => setPaymentPurchase(purchase)}
     />
-    {/* {receivePurchase && (
-  <ReceiveStockModal
-    purchase={receivePurchase}
-    onClose={() => setReceivePurchase(null)}
-  />
-)} */}
+    {receivePurchase && (
+      <ReceiveStockModal
+        purchase={receivePurchase}
+        onClose={() => setReceivePurchase(null)}
+      />
+    )}
+    {paymentPurchase && (
+      <AddPurchasePaymentModal
+        purchase={paymentPurchase}
+        onClose={() => setPaymentPurchase(null)}
+      />
+    )}
 
       {/* ================================================================
           PURCHASE REPORT

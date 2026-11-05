@@ -1,21 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import PurchaseService from "../service/PurchaseService";
+import { showToast } from "../../../../utils/toast";
 
 export function useReceivePurchaseOrder() {
   const queryClient = useQueryClient();
  
   return useMutation({
     mutationFn: ({ id, items }) => PurchaseService.receiveStock(id, { items }),
-    onSuccess: () => {
-      // refresh តារាង PO, card stats និងទំព័រ Products (stock ប្តូរ)
-      queryClient.invalidateQueries({ queryKey: ["purchase"] });        // ← key ដូចក្នុង hook getAll របស់អ្នក
-      queryClient.invalidateQueries({ queryKey: ["purchase-state"] });
-      queryClient.invalidateQueries({ queryKey: ["products"] });        // ← key ដូចក្នុង hook Product របស់អ្នក
-      // toast.success("Stock received successfully");
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["purchase-orders"] }),
+        queryClient.invalidateQueries({ queryKey: ["purchase-state"] }),
+        queryClient.invalidateQueries({ queryKey: ["goods-received"] }),
+        queryClient.invalidateQueries({ queryKey: ["products"] }),
+      ]);
+      showToast("Goods received and stock updated successfully.", "success");
     },
     onError: (error) => {
-      // toast.error(error.response?.data?.message ?? "Receive failed");
-      console.error("Receive error:", error);
+      showToast(
+        error?.response?.data?.message || error?.message || "Receive failed.",
+        "error"
+      );
     },
   });
 }

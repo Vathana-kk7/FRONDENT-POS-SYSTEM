@@ -1,27 +1,25 @@
-import React from 'react'
+import { formatReceiptDate, receiptLabel } from "../utils/goodsReceiptFormat";
 
-function GRNDetail() {
+export default function GRNDetail({ receipt }) {
+  const fields = [
+    ["GRN No.", receiptLabel(receipt)],
+    ["PO No.", receipt.purchase?.purchase_order_no || "—"],
+    ["Supplier", receipt.purchase?.supplier?.name || "—"],
+    ["Received Date", formatReceiptDate(receipt.received_at)],
+    ["Received By", receipt.user?.name || "—"],
+  ];
+
   return (
-    <div className='p-5 border border-gray-200 rounded-lg mt-5 w-[380px] hover:scale-x-104 hover:shadow-lg transition-all'>
-            <h1 className='font-medium mb-5'>GRN Details</h1>
-        <div className='flex justify-between'>
-            <div className='font-semibold text-gray-600 text-sm text-shadow-2xs'>
-                <h1 className='mb-2'>GRN No.</h1>
-                <h1 className='mb-2'>PO No.</h1>
-                <h1 className='mb-2'>Suppliers</h1>
-                <h1 className='mb-2'>Received Date</h1>
-                <h1 className='mb-2'>Received By</h1>
-            </div>
-            <div className='font-semibold text-gray-600 text-sm text-shadow-2xs'>
-                <h1 className='mb-2'>GRN-2024-0016</h1>
-                <h1 className='mb-2'>PO-2024-0018</h1>
-                <h1 className='mb-2'>Cambodia LTD</h1>
-                <h1 className='mb-2'>May 28, 24</h1>
-                <h1 className='mb-2'>Singpur Aloto</h1>
-            </div>
-        </div>
-    </div>
-  )
+    <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <h2 className="mb-5 font-semibold text-gray-800">GRN Details</h2>
+      <dl className="space-y-3">
+        {fields.map(([label, value]) => (
+          <div key={label} className="flex justify-between gap-4 text-sm">
+            <dt className="text-gray-500">{label}</dt>
+            <dd className="text-right font-medium text-gray-800">{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
 }
-
-export default GRNDetail

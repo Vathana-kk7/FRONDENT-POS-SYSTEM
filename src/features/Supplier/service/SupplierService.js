@@ -12,11 +12,20 @@ const SupplierService = {
     return response.data.data;
   },
   async create(data) {
-    const response = await privateApi.post("/supplier", data);
+    const response = await privateApi.post("/supplier", data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+  async getById(id) {
+    const response = await privateApi.get(`/supplier/${id}`);
     return response.data;
   },
   async update({ id, data }) {
-    const response = await privateApi.put(`/supplier/${id}`, data);
+    data.append("_method", "PUT");
+    const response = await privateApi.post(`/supplier/${id}`, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   },
   async delete(id) {

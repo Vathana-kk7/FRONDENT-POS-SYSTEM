@@ -43,6 +43,12 @@ const PurchaseService = {
 
         return response.data;
     },
+    createPayment: async (id, data) => {
+        const response = await privateApi.post(`/purchase/${id}/payments`, data, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        return response.data;
+    },
     getstate:async ()=>{
         const response=await privateApi.get('/purchase/state');
         return response.data;

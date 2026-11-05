@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Eye, MoreVertical, Edit, Trash2,PackageCheck  } from "lucide-react";
+import { Eye, MoreVertical, Edit, Trash2, PackageCheck, CreditCard } from "lucide-react";
 import useGetAllPurchaseOrder from "../hook/useGetAllPurchaseOrder";
 
 function formatCurrency(amount) {
@@ -14,7 +14,24 @@ function formatDate(date) {
     return new Intl.DateTimeFormat("en-CA").format(new Date(`${date}T00:00:00`));
 }
 
-function PurchaseOrderTable({onEdite, onDelete, onView,onClose,onReceive }) {
+function isLockedForEditOrDelete(purchase) {
+    const status = String(purchase.status || "").toLowerCase().replaceAll(" ", "_");
+    return ["partial", "partially_received", "received", "fully_received"].includes(status)
+        || (purchase.goods_receipts?.length ?? 0) > 0
+        || Number(purchase.goods_receipts_count ?? 0) > 0
+        || Number(purchase.received_quantity ?? 0) > 0
+        || Number(purchase.paid_amount ?? 0) > 0
+        || (purchase.payments?.length ?? 0) > 0
+        || (purchase.items ?? []).some((item) => Number(item.received_quantity) > 0);
+}
+
+function isFullyReceived(purchase) {
+    const items = purchase.items ?? [];
+    return ["received", "fully_received"].includes(String(purchase.status || "").toLowerCase().replaceAll(" ", "_"))
+        || (items.length > 0 && items.every((item) => Number(item.received_quantity) >= Number(item.quantity)));
+}
+
+function PurchaseOrderTable({ onEdite, onDelete, onView, onReceive, onAddPayment }) {
     const { data, isLoading, isError } = useGetAllPurchaseOrder();
     const purchases = Array.isArray(data?.data) ? data.data : [];
 
@@ -32,20 +49,6 @@ function PurchaseOrderTable({onEdite, onDelete, onView,onClose,onReceive }) {
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-
-    const handleEdit = (purchase) => {
-        console.log("Edit purchase order:", purchase);
-        // សរសេរកូដសម្រាប់ Edit នៅទីនេះ (ឧទាហរណ៍៖ បើក Modal ឬ Navigate ទៅកាន់ទំព័រ Edit)
-        setOpenMenuId(null);
-    };
-
-    const handleDelete = (purchase) => {
-        console.log("Delete purchase order:", purchase);
-        // សរសេរកូដសម្រាប់ Delete នៅទីនេះ (ឧទាហរណ៍៖ បង្ហាញ Confirmation Modal)
-        setOpenMenuId(null);
-    };
-
-    // const {}
 
     return (
         <div className="mt-5 h-[575px] overflow-auto rounded-xl border border-gray-200 bg-white shadow-sm">
@@ -115,6 +118,7 @@ function PurchaseOrderTable({onEdite, onDelete, onView,onClose,onReceive }) {
                                         {/* View Button */}
                                         <button
                                             type="button"
+                                            onClick={() => onView?.(purchase)}
                                             aria-label={`View purchase order ${purchase.purchase_order_no || purchase.id}`}
                                             className="rounded-lg border border-blue-200 p-2 hover:bg-gray-100"
                                         >
@@ -135,29 +139,33 @@ function PurchaseOrderTable({onEdite, onDelete, onView,onClose,onReceive }) {
                                             {/* Dropdown Menu */}
                                             {openMenuId === purchase.id && (
                                                 <div className="absolute right-12 top-0 z-50 w-36 rounded-lg border border-gray-200 bg-white shadow-lg py-1 text-left">
-                                                    <button
-                                                       onClick={() => {
-                                                            setOpenMenuId(null);
-                                                            if (onEdite) onEdite(purchase); // 👈 ត្រូវបញ្ជូន purchase ចូលទីនេះ
-                                                        }}
-                                                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                                    >
-                                                        <Edit size={16} className="text-blue-600" />
-                                                        Edit
-                                                    </button>
-                                                    <button
-                                                     type="button"
-                                                        onClick={() => {
-                                                            
-                                                            setOpenMenuId(null);
-                                                            if (onDelete) onDelete(purchase);
-                                                        }}
-                                                        className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                                                    >
-                                                        <Trash2 size={16} className="text-red-600" />
-                                                        Delete
-                                                    </button>
-                                                    {["approved", "draft"].includes(purchase.status) && (
+                                                    {!isLockedForEditOrDelete(purchase) && (
+                                                        <>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setOpenMenuId(null);
+                                                                    onEdite?.(purchase);
+                                                                }}
+                                                                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                            >
+                                                                <Edit size={16} className="text-blue-600" />
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setOpenMenuId(null);
+                                                                    onDelete?.(purchase);
+                                                                }}
+                                                                className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                                                            >
+                                                                <Trash2 size={16} className="text-red-600" />
+                                                                Delete
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {["approved", "partial", "partially_received"].includes(String(purchase.status || "").toLowerCase().replaceAll(" ", "_")) && !isFullyReceived(purchase) && (
                                                         <button
                                                             type="button"
                                                             onClick={() => {
@@ -168,6 +176,19 @@ function PurchaseOrderTable({onEdite, onDelete, onView,onClose,onReceive }) {
                                                         >
                                                             <PackageCheck size={16} className="text-green-600" />
                                                             Receive stock
+                                                        </button>
+                                                    )}
+                                                    {["approved", "partial", "partially_received", "received"].includes(String(purchase.status || "").toLowerCase().replaceAll(" ", "_")) && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setOpenMenuId(null);
+                                                                onAddPayment?.(purchase);
+                                                            }}
+                                                            className="flex w-full items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50"
+                                                        >
+                                                            <CreditCard size={16} className="text-blue-600" />
+                                                            Add Payment
                                                         </button>
                                                     )}
                                                 </div>
