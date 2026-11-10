@@ -36,6 +36,7 @@ export default function BageCart({
   paymentMethod,
   setPaymentMethod,
   onComplete,
+  onSavePending,
   isPending,
   error,
 }) {
@@ -241,14 +242,24 @@ export default function BageCart({
           <span className="text-base font-bold text-green-700">{formatCurrency(String(Math.max(0, changeCents) / 100))}</span>
         </div>
         {error && <p role="alert" className="mt-2 text-xs text-red-600">{error}</p>}
-        <button
-          type="button"
-          onClick={onComplete}
-          disabled={!canCheckout}
-          className="mt-3 flex h-10 w-full items-center justify-center gap-2 rounded-md bg-blue-800 text-sm font-semibold text-white transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {isPending ? "Processing sale..." : "Complete Sale"}
-        </button>
+        <div className="mt-3 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={onSavePending}
+            disabled={cart.length === 0 || isPending}
+            className="flex min-h-10 items-center justify-center rounded-md border border-blue-800 px-2 text-center text-xs font-semibold text-blue-800 transition hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Save as Pending Order
+          </button>
+          <button
+            type="button"
+            onClick={onComplete}
+            disabled={!canCheckout}
+            className="flex min-h-10 items-center justify-center rounded-md bg-blue-800 px-2 text-center text-xs font-semibold text-white transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isPending ? "Processing sale..." : "Complete Sale"}
+          </button>
+        </div>
       </section>
     </aside>
   );

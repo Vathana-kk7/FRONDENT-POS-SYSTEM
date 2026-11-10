@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { showToast } from "../../../../utils/toast";
 import SaleReceiptModal from "../../components/SaleReceiptModal";
 import useCreateSale from "../../hook/useCreateSale";
+import SavePendingOrderModal from "../components/SavePendingOrderModal";
 import {
   calculateSaleTotals,
   createIdempotencyKey,
@@ -22,6 +23,7 @@ export default function SalePos() {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [checkoutError, setCheckoutError] = useState("");
   const [receipt, setReceipt] = useState(null);
+  const [isPendingOrderOpen, setIsPendingOrderOpen] = useState(false);
   const idempotencyKey = useRef(null);
   const { mutateAsync, isPending } = useCreateSale();
 
@@ -138,11 +140,28 @@ export default function SalePos() {
             onComplete={completeSale}
             isPending={isPending}
             error={checkoutError}
+            onSavePending={() => setIsPendingOrderOpen(true)}
           />
         </div>
       </div>
 
       {receipt && <SaleReceiptModal sale={receipt} onClose={() => setReceipt(null)} />}
+      {isPendingOrderOpen && (
+        <SavePendingOrderModal
+          cart={cart}
+          customer={customer}
+          discount={discount}
+          onClose={() => setIsPendingOrderOpen(false)}
+          onSaved={({ error } = {}) => {
+            setIsPendingOrderOpen(false);
+            setCart([]);
+            setCustomer(null);
+            setDiscount("0");
+            setAmountPaid("");
+            showToast(error || "Pending order saved successfully.", error ? "error" : "success");
+          }}
+        />
+      )}
     </div>
   );
 }

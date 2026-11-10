@@ -78,6 +78,12 @@ export default function SaleReceiptModal({ sale, onClose }) {
           <div className="flex justify-between"><dt className="text-gray-500">Amount paid</dt><dd>{formatCurrency(sale.amount_paid)}</dd></div>
           <div className="flex justify-between font-semibold text-green-700"><dt>Change</dt><dd>{formatCurrency(sale.change_amount)}</dd></div>
         </dl>
+        {sale.notes && (
+          <div className="mt-4 border-t border-dashed border-gray-300 pt-3 text-xs">
+            <p className="font-semibold text-gray-600">Note</p>
+            <p className="mt-1 whitespace-pre-line text-gray-700">{sale.notes}</p>
+          </div>
+        )}
         <p className="mt-6 text-center text-xs text-gray-500">Thank you for your purchase!</p>
       </section>
     </div>

@@ -31,7 +31,8 @@ function Sidebar() {
     location.pathname.startsWith("/saleorder") ||
     location.pathname.startsWith("/invoice") ||
     location.pathname.startsWith("/payment") ||
-    location.pathname.startsWith("/return")
+    location.pathname.startsWith("/return") ||
+    location.pathname.startsWith("/pending-orders")
   );
   const [purchaseOpen, setpurchaseOpen] = useState(
     location.pathname.startsWith("/purchaseorder") ||
@@ -168,7 +169,8 @@ function Sidebar() {
                 location.pathname.startsWith("/saleorder") ||
                 location.pathname.startsWith("/invoice") ||
                 location.pathname.startsWith("/payment") ||
-                location.pathname.startsWith("/return")
+                location.pathname.startsWith("/return") ||
+                location.pathname.startsWith("/pending-orders")
                   ? "bg-white text-indigo-950 font-medium scale-105"
                   : "text-indigo-100 hover:bg-indigo-800 hover:scale-120 hover:translate-x-1"
               }
@@ -204,7 +206,7 @@ function Sidebar() {
               ease-in-out
               ${
                 salesOpen
-                  ? "max-h-60 opacity-100"
+                  ? "max-h-80 opacity-100"
                   : "max-h-0 opacity-0"
               }
             `}
@@ -250,6 +252,22 @@ function Sidebar() {
                 />
 
                 <span>Sale Orders</span>
+              </NavLink>
+
+              <NavLink
+                to="/pending-orders"
+                className={({ isActive }) =>
+                  `group flex items-center gap-3 px-3 py-2 rounded-md mb-1 text-sm
+                  transform transition-all duration-300 ease-in-out
+                  ${
+                    isActive
+                      ? "text-white bg-white/15 font-medium translate-x-1"
+                      : "text-indigo-200 hover:text-white hover:bg-indigo-800 hover:translate-x-1"
+                  }`
+                }
+              >
+                <Receipt size={16} className="transition-transform duration-300 group-hover:scale-110" />
+                <span>Pending Orders</span>
               </NavLink>
 
               {/* Invoices */}

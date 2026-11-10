@@ -18,6 +18,7 @@ import Invoice from "../features/sale/Invoice/page/Invoice";
 import Payment from "../features/sale/Payment/page/Payment";
 import Return from "../features/sale/Return/page/Return";
 import SalePos from "../features/sale/SalePos/page/SalePos";
+import PendingOrders from "../features/sale/PendingOrders/page/PendingOrders";
 import Supplier from "../features/Supplier/page/Supplier";
 import PurchaseOrder from "../features/Purchase/PurchaseOrder/pages/PurchaseOrder";
 import PurchaseReturn from "../features/Purchase/PurchaseReturn/pages/PurchaseReturn";
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
       {path : "/payment", element : <Payment/>},
       {path : "/return", element : <Return/>},
       {path : "/salepos", element : <SalePos/>},
+      {path : "/pending-orders", element : <PendingOrders/>},
       {path : "/supplier", element : <Supplier/>},
       {path : "/purchaseorder", element : <PurchaseOrder/>},
       {path : "/purchasereturn", element : <PurchaseReturn/>},
