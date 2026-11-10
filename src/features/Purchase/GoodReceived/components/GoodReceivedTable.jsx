@@ -26,50 +26,69 @@ export default function GoodReceivedTable({
         </thead>
         <tbody>
           {isLoading ? (
-            Array.from({ length: 5 }, (_, index) => (
-              <tr key={index} className="animate-pulse border-b">
-                {Array.from({ length: 9 }, (_, cell) => (
-                  <td key={cell} className="px-6 py-5"><div className="h-4 rounded bg-gray-200" /></td>
-                ))}
+            // Skeleton Loading Rows
+            Array.from({ length: 6 }, (_, index) => (
+              <tr key={`skeleton-${index}`} className="animate-pulse border-b border-gray-200">
+                <td className="px-6 py-4"><div className="h-4 w-28 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4"><div className="h-4 w-32 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4 text-right"><div className="ml-auto h-4 w-10 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4 text-right"><div className="ml-auto h-4 w-12 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4 text-right"><div className="ml-auto h-4 w-20 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4"><div className="h-4 w-24 rounded bg-gray-200" /></td>
+                <td className="px-6 py-4 text-center"><div className="mx-auto h-8 w-8 rounded-lg bg-gray-200" /></td>
               </tr>
             ))
           ) : isError ? (
-            <tr><td colSpan={9} className="px-6 py-12 text-center text-red-600">Failed to load goods receipts. Refresh and try again.</td></tr>
+            <tr>
+              <td colSpan={9} className="px-6 py-12 text-center text-red-600">
+                Failed to load goods receipts. Refresh and try again.
+              </td>
+            </tr>
           ) : receipts.length === 0 ? (
-            <tr><td colSpan={9} className="px-6 py-12 text-center text-gray-500">No goods receipts have been recorded.</td></tr>
-          ) : receipts.map((receipt) => {
-            const items = receipt.items ?? [];
-            const totalQty = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
-            const totalValue = items.reduce(
-              (sum, item) => sum + Number(item.quantity || 0) * Number(item.purchase_item?.cost_price || 0),
-              0
-            );
-            return (
-              <tr
-                key={receipt.id}
-                className={`border-b border-gray-200 transition-colors hover:bg-blue-50 ${selectedReceiptId === receipt.id ? "bg-blue-50" : ""}`}
-              >
-                <td className="px-6 py-4 font-medium text-blue-800">{receiptLabel(receipt)}</td>
-                <td className="px-6 py-4">{receipt.purchase?.purchase_order_no || "—"}</td>
-                <td className="px-6 py-4">{receipt.purchase?.supplier?.name || "—"}</td>
-                <td className="px-6 py-4">{formatReceiptDate(receipt.received_at)}</td>
-                <td className="px-6 py-4 text-right">{items.length}</td>
-                <td className="px-6 py-4 text-right">{totalQty}</td>
-                <td className="px-6 py-4 text-right">{formatCurrency(totalValue)}</td>
-                <td className="px-6 py-4">{receipt.user?.name || "—"}</td>
-                <td className="px-6 py-4 text-center">
-                  <button
-                    type="button"
-                    aria-label={`View ${receiptLabel(receipt)}`}
-                    onClick={() => onSelect?.(receipt)}
-                    className="rounded-lg border border-blue-200 p-2 hover:bg-white"
-                  >
-                    <Eye className="text-blue-600" size={18} />
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+            <tr>
+              <td colSpan={9} className="px-6 py-12 text-center text-gray-500">
+                No goods receipts have been recorded.
+              </td>
+            </tr>
+          ) : (
+            receipts.map((receipt) => {
+              const items = receipt.items ?? [];
+              const totalQty = items.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+              const totalValue = items.reduce(
+                (sum, item) => sum + Number(item.quantity || 0) * Number(item.purchase_item?.cost_price || 0),
+                0
+              );
+              return (
+                <tr
+                  key={receipt.id}
+                  className={`border-b border-gray-200 transition-colors hover:bg-blue-50 ${
+                    selectedReceiptId === receipt.id ? "bg-blue-50" : ""
+                  }`}
+                >
+                  <td className="px-6 py-4 font-medium text-blue-800">{receiptLabel(receipt)}</td>
+                  <td className="px-6 py-4">{receipt.purchase?.purchase_order_no || "—"}</td>
+                  <td className="px-6 py-4">{receipt.purchase?.supplier?.name || "—"}</td>
+                  <td className="px-6 py-4">{formatReceiptDate(receipt.received_at)}</td>
+                  <td className="px-6 py-4 text-right">{items.length}</td>
+                  <td className="px-6 py-4 text-right">{totalQty}</td>
+                  <td className="px-6 py-4 text-right">{formatCurrency(totalValue)}</td>
+                  <td className="px-6 py-4">{receipt.user?.name || "—"}</td>
+                  <td className="px-6 py-4 text-center">
+                    <button
+                      type="button"
+                      aria-label={`View ${receiptLabel(receipt)}`}
+                      onClick={() => onSelect?.(receipt)}
+                      className="rounded-lg border border-blue-200 p-2 hover:bg-white"
+                    >
+                      <Eye className="text-blue-600" size={18} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
     </div>

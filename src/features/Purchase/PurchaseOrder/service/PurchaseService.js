@@ -49,6 +49,10 @@ const PurchaseService = {
         });
         return response.data;
     },
+    getBanks: async () => {
+        const response = await privateApi.get("/bank");
+        return response.data.data;
+    },
     getstate:async ()=>{
         const response=await privateApi.get('/purchase/state');
         return response.data;

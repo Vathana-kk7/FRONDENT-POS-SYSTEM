@@ -16,11 +16,15 @@ function formatDate(date) {
 
 function isLockedForEditOrDelete(purchase) {
     const status = String(purchase.status || "").toLowerCase().replaceAll(" ", "_");
+    const paymentStatus = String(purchase.payment_status || "").toLowerCase().replaceAll(" ", "_");
     return ["partial", "partially_received", "received", "fully_received"].includes(status)
+        || ["partial", "partially_paid", "paid"].includes(paymentStatus)
+        || ["paid", "partially_paid"].includes(status)
         || (purchase.goods_receipts?.length ?? 0) > 0
         || Number(purchase.goods_receipts_count ?? 0) > 0
         || Number(purchase.received_quantity ?? 0) > 0
         || Number(purchase.paid_amount ?? 0) > 0
+        || Number(purchase.paid_total ?? purchase.total_paid ?? 0) > 0
         || (purchase.payments?.length ?? 0) > 0
         || (purchase.items ?? []).some((item) => Number(item.received_quantity) > 0);
 }

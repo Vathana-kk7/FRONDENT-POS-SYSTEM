@@ -1,274 +1,150 @@
-import { closestCenter, DndContext } from '@dnd-kit/core';
-import { Download, File, FileSpreadsheet, FileText, Plus } from 'lucide-react'
-import React, { useState } from 'react'
-import { useSaleOrderLayout } from '../../../../context/SaleOrderLayoutContext';
-import { SaleOrderCards } from '../data/SaleOrderdata';
-import { arrayMove, rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
-import SortableCard from '../components/SortableCard';
-import SaleOrderFilter from '../components/SaleOrderFilter';
-import { useSaleOrder } from '../../../../context/SaleOrderContext';
-import SaleOrderTable from '../components/SaleOrderTable';
-import ProductPagination from '../../../product/components/ProductPagination';
-import SaleOrderPagination from '../components/SaleOrderPagination';
-import ViewSaleOrderModal from '../components/ViewSaleOrderModal';
-import EditeSaleOrder from '../components/EditeSaleOrder';
-import ModelSaleOrder from '../components/ModelSaleOrder';
-// import DeleteModal from "../../../components/common/Delete";
+import { Search, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import SaleReceiptModal from "../../components/SaleReceiptModal";
+import useGetAllSales from "../../hook/useGetAllSales";
+import SaleOrderPagination from "../components/SaleOrderPagination";
+import SaleOrderTable from "../components/SaleOrderTable";
 
-function SaleOrder() {
-    const { dragEnablede } = useSaleOrderLayout();
-    const [cards, setCards] = useState(SaleOrderCards);
-    const [isImportOpen, setIsImportOpen] = useState(false);
-    function handleDragEnd(event) {
-    
-        const { active, over } = event;
-    
-        if (!over) return;
-    
-        if (active.id !== over.id) {
-    
-          const oldIndex = cards.findIndex(
-            (item) => item.id === active.id
-          );
-    
-          const newIndex = cards.findIndex(
-            (item) => item.id === over.id
-          );
-    
-          setCards(arrayMove(cards, oldIndex, newIndex));
-        }
-    }
+const PER_PAGE = 20;
 
-     const {
-      isAddOpen,
-      isDeleteOpen,
-      isViewOpen,
-      isEditOpen,
-      selectedProduct,
-    
-      openAdd,
-      closeAdd,
-      openView,
-      closeView,
-      openEdit,
-      closeEdit,
-      openDelete,
-      closeDelete,
-    } = useSaleOrder();
+export default function SaleOrder() {
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState("");
+  const [page, setPage] = useState(1);
+  const [selectedSale, setSelectedSale] = useState(null);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setSearch(searchInput.trim());
+      setPage(1);
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
+
+  const { data: response, isLoading, isFetching, isError, error } = useGetAllSales({
+    page,
+    perPage: PER_PAGE,
+    search,
+    dateFrom,
+    dateTo,
+    paymentStatus,
+  });
+  const pagination = response?.data;
+  const sales = Array.isArray(pagination?.data) ? pagination.data : [];
+  const lastPage = Number(pagination?.last_page) || 1;
+  const total = Number(pagination?.total) || 0;
+
+  function resetFilters() {
+    setSearchInput("");
+    setSearch("");
+    setDateFrom("");
+    setDateTo("");
+    setPaymentStatus("");
+    setPage(1);
+  }
+
   return (
-    <div className='px-5'>
-        <div className="flex justify-between">
-            <h1 className="text-xl font-medium">
-                Sale Orders
-            </h1>
-            <div className="flex gap-3">
-                {/*  */}
-                <button type="button" onClick={openAdd} className="flex h-11 w-40 items-center justify-center  rounded-xl bg-blue-800 text-white shadow-lg  transition hover:bg-blue-900 cursor-pointer">
-                    <Plus size={20} />
-                    <span className="ms-2">
-                        New Sale Order
-                    </span>
-                </button>
-                <div className="relative">
-
-                    {/* Import Button */}
-                    <button
-                    type="button"
-                    onClick={() => setIsImportOpen(!isImportOpen)}
-                    className="
-                        bg-white
-                        flex
-                        justify-center
-                        items-center
-                        text-black
-                        w-40
-                        h-11
-                        rounded-xl
-                        shadow-lg
-                        border
-                        border-gray-200
-                        cursor-pointer
-                        hover:bg-gray-50
-                        transition
-                    "
-                    >
-                    <Download size={20} />
-
-                    <span className="ms-2">
-                        Export
-                    </span>
-                    </button>
-                    {/* Dropdown */}
-                    {isImportOpen && (
-                    <div
-                        className="
-                        absolute
-                        right-0
-                        top-14
-                        z-50
-                        w-48
-                        bg-white
-                        border
-                        border-gray-200
-                        rounded-xl
-                        shadow-xl
-                        p-2
-
-                        animate-[dropdown_0.2s_ease-out]
-                        "
-                    >
-
-                        {/* PDF */}
-                        <div
-                        className="
-                            flex
-                            items-center
-                            gap-3
-                            px-3
-                            py-3
-                            rounded-lg
-                            cursor-pointer
-                            hover:bg-red-50
-                            transition
-                        "
-                        >
-                        <FileText
-                            size={20}
-                            className="text-red-500"
-                        />
-
-                        <span className="font-medium text-gray-700">
-                            PDF File
-                        </span>
-                        </div>
-
-
-                        {/* DOC */}
-                        <div
-                        className="
-                            flex
-                            items-center
-                            gap-3
-                            px-3
-                            py-3
-                            rounded-lg
-                            cursor-pointer
-                            hover:bg-blue-50
-                            transition
-                        "
-                        >
-                        <File
-                            size={20}
-                            className="text-blue-500"
-                        />
-
-                        <span className="font-medium text-gray-700">
-                            DOC File
-                        </span>
-                        </div>
-
-
-                        {/* Excel */}
-                        <div
-                        className="
-                            flex
-                            items-center
-                            gap-3
-                            px-3
-                            py-3
-                            rounded-lg
-                            cursor-pointer
-                            hover:bg-green-50
-                            transition
-                        "
-                        >
-                        <FileSpreadsheet
-                            size={20}
-                            className="text-green-600"
-                        />
-
-                        <span className="font-medium text-gray-700">
-                            Excel File
-                        </span>
-                        </div>
-
-                    </div>
-                    )}
-                </div>
-            </div>
-            {/* Cart */}
+    <div className="px-5 pb-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">Sales History</h1>
+          <p className="mt-1 text-sm text-gray-500">Search completed sales and view or print receipts.</p>
         </div>
-        <DndContext
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-            <SortableContext
-                items={cards}
-                strategy={rectSortingStrategy}
-            >
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-5">
-    
-                {cards.map((card) => (
-                    <SortableCard
-                    key={card.id}
-                    card={card}
-                    disabled={!dragEnablede}
-                    />
-                ))}
-                </div>
-            </SortableContext>
-        </DndContext>
-        
-        {/* Search */}
-        <div >
-            <SaleOrderFilter/>
-            <SaleOrderTable
-                onView={openView}
-                onEdit={openEdit}
-                onDelete={openDelete}
+        <p className="rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-800">
+          {isFetching ? "Updating..." : `${total} sale${total === 1 ? "" : "s"}`}
+        </p>
+      </div>
+
+      <section className="mt-5 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-white p-4">
+        <label className="min-w-[220px] flex-1 text-xs font-medium text-gray-600">
+          Search invoice
+          <span className="relative mt-1 block">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              placeholder="Invoice number"
+              className="h-10 w-full rounded-lg border border-gray-200 pl-9 pr-3 text-sm outline-none focus:border-blue-500"
             />
-                <div className="flex justify-between border border-gray-200 bg-gray-100 p-3 ">
-                <h1 className="font-simbold text-gray-600">Showing 1 to 7 of 1,250 products</h1>
-                <SaleOrderPagination />
-                </div>
+          </span>
+        </label>
+        <label className="text-xs font-medium text-gray-600">
+          From
+          <input
+            type="date"
+            value={dateFrom}
+            max={dateTo || undefined}
+            onChange={(event) => {
+              setDateFrom(event.target.value);
+              setPage(1);
+            }}
+            className="mt-1 block h-10 rounded-lg border border-gray-200 px-3 text-sm"
+          />
+        </label>
+        <label className="text-xs font-medium text-gray-600">
+          To
+          <input
+            type="date"
+            value={dateTo}
+            min={dateFrom || undefined}
+            onChange={(event) => {
+              setDateTo(event.target.value);
+              setPage(1);
+            }}
+            className="mt-1 block h-10 rounded-lg border border-gray-200 px-3 text-sm"
+          />
+        </label>
+        <label className="text-xs font-medium text-gray-600">
+          Payment status
+          <select
+            value={paymentStatus}
+            onChange={(event) => {
+              setPaymentStatus(event.target.value);
+              setPage(1);
+            }}
+            className="mt-1 block h-10 min-w-36 rounded-lg border border-gray-200 bg-white px-3 text-sm"
+          >
+            <option value="">All statuses</option>
+            <option value="paid">Paid</option>
+            <option value="partial">Partial</option>
+            <option value="unpaid">Unpaid</option>
+          </select>
+        </label>
+        <button type="button" onClick={resetFilters} className="flex h-10 items-center gap-1 rounded-lg px-3 text-sm text-gray-600 hover:bg-gray-100">
+          <X size={16} /> Clear
+        </button>
+      </section>
+
+      {isError && (
+        <p role="alert" className="mt-3 text-sm text-red-600">
+          {error?.response?.data?.message || "Sales could not be loaded."}
+        </p>
+      )}
+      <SaleOrderTable
+        sales={sales}
+        isLoading={isLoading}
+        isError={isError}
+        onView={setSelectedSale}
+      />
+      {lastPage > 1 && (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <span className="text-sm text-gray-600">
+            Showing {pagination?.from ?? 0} to {pagination?.to ?? 0} of {total} sales
+          </span>
+          <SaleOrderPagination
+            count={lastPage}
+            page={page}
+            disabled={isFetching}
+            onChange={(_, value) => setPage(value)}
+          />
         </div>
-        {/* Product Model */}
-      {/* View */}
-      {isViewOpen && (
-        <ViewSaleOrderModal
-          product={selectedProduct}
-          closeView={closeView}
-        />
       )}
 
-      {/* Edit */}
-      {isEditOpen && (
-        <EditeSaleOrder
-          product={selectedProduct}
-          closeEdit={closeEdit}
-        />
-      )}
-      {/* Model Product */}
-      {isAddOpen  && (
-        <ModelSaleOrder
-          onClose={closeAdd}
-        />
-      )}
-      {/* Delete */}
-      {/* {isDeleteOpen && (
-        <DeleteModal
-          item={selectedProduct}
-          title="Delete Product?"
-          message="Are you sure you want to delete this product? This action cannot be undone."
-          onClose={closeDelete}
-          onConfirm={() => {
-            console.log("Delete product:", selectedProduct);
-            closeDelete();
-          }}
-        />
-      )} */}
+      {selectedSale && <SaleReceiptModal sale={selectedSale} onClose={() => setSelectedSale(null)} />}
     </div>
-  )
+  );
 }
-
-export default SaleOrder

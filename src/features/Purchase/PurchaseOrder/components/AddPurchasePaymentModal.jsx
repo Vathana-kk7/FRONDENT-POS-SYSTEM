@@ -3,6 +3,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import SupplierService from "../../../Supplier/service/SupplierService";
 import useCreatePurchasePayment from "../hook/useCreatePurchasePayment";
+import PurchaseService from "../service/PurchaseService";
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat("en-US", {
@@ -23,6 +24,7 @@ function getImageUrl(image) {
 
 export default function AddPurchasePaymentModal({ purchase, onClose }) {
   const [error, setError] = useState("");
+  const [method, setMethod] = useState("cash");
   const { mutateAsync, isPending } = useCreatePurchasePayment();
   const supplierId = purchase.supplier_id ?? purchase.supplier?.id;
   const { data: supplierResponse, isLoading: isSupplierLoading, isError: isSupplierError } = useQuery({
@@ -30,7 +32,19 @@ export default function AddPurchasePaymentModal({ purchase, onClose }) {
     queryFn: () => SupplierService.getById(supplierId),
     enabled: Boolean(supplierId),
   });
+  const {
+    data: availableBanks = [],
+    isLoading: isBanksLoading,
+    isError: isBanksError,
+  } = useQuery({
+    queryKey: ["banks"],
+    queryFn: PurchaseService.getBanks,
+    enabled: method === "bank_transfer",
+  });
   const supplier = supplierResponse?.data?.data ?? supplierResponse?.data ?? purchase.supplier;
+  const banks = Array.isArray(availableBanks)
+    ? availableBanks.filter((bank) => String(bank.status).toLowerCase() !== "inactive")
+    : [];
   const total = Number(purchase.total ?? purchase.grand_total ?? purchase.amount ?? 0);
   const paidFromPayments = Array.isArray(purchase.payments)
     ? purchase.payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0)
@@ -98,12 +112,50 @@ export default function AddPurchasePaymentModal({ purchase, onClose }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="text-sm font-medium text-gray-700">
             Payment Method
-            <select name="method" required defaultValue="cash" disabled={isPending} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2">
+            <select
+              name="method"
+              required
+              value={method}
+              onChange={(event) => setMethod(event.target.value)}
+              disabled={isPending}
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+            >
               <option value="cash">Cash</option>
               <option value="bakong">Bakong</option>
               <option value="bank_transfer">Bank Transfer</option>
             </select>
           </label>
+          {method === "bank_transfer" && (
+            <label className="text-sm font-medium text-gray-700">
+              Pay From Bank Account
+              <select
+                name="bank_id"
+                required
+                disabled={isPending || isBanksLoading || banks.length === 0}
+                defaultValue=""
+                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2"
+              >
+                <option value="">
+                  {isBanksLoading ? "Loading bank accounts..." : "Select a bank account"}
+                </option>
+                {banks.map((bank) => (
+                  <option key={bank.id} value={bank.id}>
+                    {bank.name} — {bank.account_name} ({bank.account_number})
+                  </option>
+                ))}
+              </select>
+              {isBanksError && (
+                <span role="alert" className="mt-1 block text-xs text-red-600">
+                  Could not load bank accounts. Try again or choose another payment method.
+                </span>
+              )}
+              {!isBanksLoading && !isBanksError && banks.length === 0 && (
+                <span className="mt-1 block text-xs text-red-600">
+                  No active bank accounts are available for transfer.
+                </span>
+              )}
+            </label>
+          )}
           <label className="text-sm font-medium text-gray-700">
             Amount
             <input name="amount" required type="number" min="0.01" max={balance} step="0.01" disabled={isPending || balance === 0} className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2" />

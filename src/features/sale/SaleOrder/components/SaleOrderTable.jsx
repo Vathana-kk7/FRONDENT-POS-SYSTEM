@@ -1,218 +1,71 @@
-import { Delete, Edit, EllipsisVertical, Eye, FileEdit, NotebookPen, Trash2 } from 'lucide-react'
-import React, { useState } from 'react'
-import { SaleOrder } from '../../SaleOrder/data/SaleOrderdata'; 
-import { useSaleOrder } from '../../../../context/SaleOrderContext';
-// import { useModal } from '../../../context/ModalContext';
-function SaleOrderTable() {
-  const {
-    openView,
-    openEdit,
-    openDelete,
-  } = useSaleOrder();
-  return (
-    <div className=''>
-       {/* ================= HEADER ================= */}
-      <div
-        className="
-          grid
-          grid-cols-[minmax(380px,1fr)_140px_150px_120px_100px_130px_170px]
-          items-center
-          gap-4
-          h-[50px]
-          px-4
-          bg-gray-100
-          border
-          border-gray-200
-          text-gray-900
-          font-medium
-        "
-      >
-        <div>Product</div>
-        <div>Category</div>
-        <div>SKU</div>
-        <div>Price</div>
-        <div>Stock</div>
-        <div>Status</div>
-        <div>Action</div>
-      </div>
-      {/* scroll */}
-     <div className="max-h-[450px] overflow-y-auto scrollbar-none">
-  {SaleOrder.map((product) => (
-    <div
-      key={product.id}
-      className="
-        grid
-        grid-cols-[minmax(380px,1fr)_140px_150px_120px_100px_130px_170px]
-        items-center
-        gap-4
-        min-h-[80px]
-        px-6
-        
-        bg-gray-50
-        border-b
-        border-gray-200
-        hover:bg-gray-200
-        hover:scale-101
-        transition-all
-      "
-    >
-      {/* Product */}
-      <div className="flex items-center gap-5 min-w-0">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="
-            w-[65px]
-            h-[55px]
-            object-cover
-            rounded-md
-            shrink-0
-          "
-        />
+import { Eye } from "lucide-react";
+import { formatCurrency } from "../../utils/posFormat";
 
-        <div className="min-w-0">
-          <h1 className="font-semibold text-gray-900 truncate">
-            {product.name}
-          </h1>
-
-          <p className="text-sm text-gray-500 truncate">
-            {product.description}
-          </p>
-        </div>
-      </div>
-
-      {/* Category */}
-      <div>
-        <span
-          className="
-            inline-flex
-            items-center
-            bg-blue-100
-            px-3
-            py-1
-            rounded-md
-            text-sm
-            font-semibold
-            text-blue-800
-          "
-        >
-          Laptop
-        </span>
-      </div>
-
-      {/* SKU */}
-      <div className="text-gray-600 font-semibold">
-        LAP-HP-001
-      </div>
-
-      {/* Price */}
-      <div className="text-gray-600 font-semibold">
-        $650.00
-      </div>
-
-      {/* Stock */}
-      <div className="text-green-600 font-semibold">
-        25
-      </div>
-
-      {/* Status */}
-      <div>
-        <span
-          className="
-            inline-flex
-            items-center
-            bg-green-100
-            px-3
-            py-1
-            rounded-md
-            text-sm
-            font-semibold
-            text-green-800
-          "
-        >
-          In Stock
-        </span>
-      </div>
-
-      {/* Actions */}
-      <div className="flex items-center gap-3">
-        {/* View */}
-        <button
-          type="button"
-          onClick={() => openView(product)}
-          className="
-            w-9
-            h-9
-            flex
-            items-center
-            justify-center
-            border
-            border-gray-300
-            rounded-lg
-            cursor-pointer
-            hover:bg-white
-            transition
-          "
-        >
-          <Eye
-            color="blue"
-            size={18}
-          />
-        </button>
-
-        {/* Edit */}
-        <button
-          type="button"
-          onClick={() => openEdit(product)}
-          className="
-            w-9
-            h-9
-            flex
-            items-center
-            justify-center
-            border
-            border-gray-300
-            rounded-lg
-            cursor-pointer
-            hover:bg-white
-            transition
-          "
-        >
-          <FileEdit
-            className="text-yellow-500"
-            size={18}
-          />
-        </button>
-
-        {/* Delete */}
-        <button
-          type="button"
-          onClick={() => openDelete(product)}
-          className="
-            w-9
-            h-9
-            flex
-            items-center
-            justify-center
-            border
-            border-gray-300
-            rounded-lg
-            cursor-pointer
-            hover:bg-white
-            transition
-          "
-        >
-          <EllipsisVertical
-            className="text-red-500"
-            size={18}
-          />
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
-    </div>
-  )
+function formatDate(date) {
+  if (!date) return "—";
+  const parsed = new Date(date);
+  return Number.isNaN(parsed.getTime()) ? "—" : new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(parsed);
 }
 
-export default SaleOrderTable
+export default function SaleOrderTable({ sales = [], isLoading, isError, onView }) {
+  return (
+    <div className="mt-5 max-h-[575px] overflow-auto rounded-xl border border-gray-200 bg-white shadow-sm">
+      <table className="min-w-full text-sm">
+        <thead className="sticky top-0 z-10 bg-gray-100 text-left text-gray-700">
+          <tr>
+            <th className="px-5 py-4 font-semibold">Invoice Number</th>
+            <th className="px-5 py-4 font-semibold">Customer</th>
+            <th className="px-5 py-4 font-semibold">Sale Date</th>
+            <th className="px-5 py-4 font-semibold">Cashier</th>
+            <th className="px-5 py-4 text-right font-semibold">Total</th>
+            <th className="px-5 py-4 font-semibold">Payment Method</th>
+            <th className="px-5 py-4 font-semibold">Payment Status</th>
+            <th className="px-5 py-4 text-center font-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {isLoading ? (
+            Array.from({ length: 6 }, (_, index) => (
+              <tr key={`loading-${index}`} className="animate-pulse border-t border-gray-100">
+                {Array.from({ length: 8 }, (_, cell) => (
+                  <td key={cell} className="px-5 py-5"><div className="h-4 rounded bg-gray-200" /></td>
+                ))}
+              </tr>
+            ))
+          ) : isError ? (
+            <tr><td colSpan={8} className="px-5 py-12 text-center text-red-600">Sales could not be loaded. Refresh and try again.</td></tr>
+          ) : sales.length === 0 ? (
+            <tr><td colSpan={8} className="px-5 py-12 text-center text-gray-500">No sales match these filters.</td></tr>
+          ) : sales.map((sale) => (
+            <tr key={sale.id} className="border-t border-gray-100 transition hover:bg-blue-50">
+              <td className="px-5 py-4 font-semibold text-blue-800">{sale.invoice_no}</td>
+              <td className="px-5 py-4">{sale.customer?.name || "Walk-in"}</td>
+              <td className="px-5 py-4">{formatDate(sale.sale_date)}</td>
+              <td className="px-5 py-4">{sale.cashier?.name || "—"}</td>
+              <td className="px-5 py-4 text-right font-medium">{formatCurrency(sale.total)}</td>
+              <td className="px-5 py-4 capitalize">{String(sale.payment_method || "cash").replaceAll("_", " ")}</td>
+              <td className="px-5 py-4">
+                <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold capitalize text-green-700">
+                  {sale.payment_status || "paid"}
+                </span>
+              </td>
+              <td className="px-5 py-4 text-center">
+                <button
+                  type="button"
+                  aria-label={`View receipt ${sale.invoice_no}`}
+                  onClick={() => onView?.(sale)}
+                  className="rounded-lg border border-blue-200 p-2 hover:bg-white"
+                >
+                  <Eye size={18} className="text-blue-700" />
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

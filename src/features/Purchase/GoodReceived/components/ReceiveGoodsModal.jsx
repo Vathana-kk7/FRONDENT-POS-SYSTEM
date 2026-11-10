@@ -12,7 +12,9 @@ export default function ReceiveGoodsModal({ onClose, onReceived }) {
 
   const purchases = Array.isArray(purchaseResponse?.data) ? purchaseResponse.data : [];
   const availablePurchases = purchases.filter((purchase) =>
-    ["approved", "partial"].includes(String(purchase.status).toLowerCase())
+    ["approved", "partial", "partially_received", "partially received"].includes(
+      String(purchase.status).toLowerCase()
+    )
   );
   const purchase = availablePurchases.find((entry) => String(entry.id) === purchaseId);
   const items = useMemo(
