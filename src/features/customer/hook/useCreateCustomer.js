@@ -15,6 +15,18 @@ export default function useCreateCustomer(){
                 queryKey:["customer-stats"],
             })
             showToast("បង្កើត Customers ថ្មីបានជោគជ័យ!", "success");
+        },
+        onError:(error)=>{
+            const validationErrors = error?.response?.data?.errors;
+            const firstValidationError = validationErrors
+                ? Object.values(validationErrors).flat()[0]
+                : null;
+            const message =
+                firstValidationError ||
+                error?.response?.data?.message ||
+                "បង្កើត Customer បរាជ័យ!";
+
+            showToast(message, "error");
         }
 
     })

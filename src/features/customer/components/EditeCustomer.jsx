@@ -1,6 +1,7 @@
 import { LoaderCircle, X } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import CustomerProfileImage from "./CustomerProfileImage";
 
 function EditeCustomer({
   selectedCustomer,
@@ -8,6 +9,7 @@ function EditeCustomer({
   editCustomer,
   isPending = false,
 }) {
+  const [profileImage, setProfileImage] = useState(null);
   const {
     register,
     handleSubmit,
@@ -28,6 +30,7 @@ function EditeCustomer({
   useEffect(() => {
     if (!selectedCustomer) return;
 
+    setProfileImage(null);
     reset({
       name: selectedCustomer.name || "",
       phone: selectedCustomer.phone || "",
@@ -50,7 +53,7 @@ function EditeCustomer({
 
       await editCustomer({
         id: selectedCustomer.id,
-        data,
+        data: { ...data, image: profileImage },
       });
 
       onClose();
@@ -93,6 +96,12 @@ function EditeCustomer({
           </div>
 
           <div className="space-y-4 py-5">
+            <CustomerProfileImage
+              image={selectedCustomer?.image}
+              file={profileImage}
+              onChange={setProfileImage}
+              disabled={isPending}
+            />
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-semibold text-gray-700">
@@ -207,7 +216,7 @@ function EditeCustomer({
 
             <button
               type="submit"
-              disabled={isPending || !isDirty}
+              disabled={isPending || (!isDirty && !profileImage)}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-800 px-5 py-2 text-sm font-medium text-white transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isPending && <LoaderCircle size={16} className="animate-spin" />}

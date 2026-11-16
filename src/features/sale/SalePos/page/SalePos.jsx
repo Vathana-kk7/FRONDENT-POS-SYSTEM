@@ -81,7 +81,17 @@ export default function SalePos() {
           quantity: item.quantity,
         })),
       });
-      setReceipt(response?.data ?? response);
+      const sale = response?.data ?? response;
+      setReceipt({
+        ...sale,
+        customer: sale?.customer
+          ? {
+            ...sale.customer,
+            address: sale.customer.address ?? customer?.address,
+            phone: sale.customer.phone ?? customer?.phone,
+          }
+          : customer ?? null,
+      });
       setCart([]);
       setCustomer(null);
       setDiscount("0");

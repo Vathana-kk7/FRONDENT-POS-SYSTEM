@@ -35,8 +35,8 @@ export default function SaleReceiptModal({ sale, onClose }) {
         </div>
 
         <header className="border-b border-dashed border-gray-300 pb-4 text-center">
-          <img src="/Logo_POS.png" alt="Store logo" className="mx-auto mb-2 h-14 w-14 object-contain" />
-          <h1 className="text-lg font-bold text-gray-900">All-in-One Computer Shop</h1>
+          <img src="/tusawat.jpg" alt="Tusawat logo" className="mx-auto mb-2 h-14 w-14 object-contain" />
+          <h1 className="text-lg font-bold text-gray-900">Tusawat Computer</h1>
           <p className="mt-1 text-xs text-gray-500">Sales receipt</p>
         </header>
 
@@ -44,7 +44,16 @@ export default function SaleReceiptModal({ sale, onClose }) {
           <dt className="text-gray-500">Invoice</dt><dd className="text-right font-semibold">{sale.invoice_no || "—"}</dd>
           <dt className="text-gray-500">Date</dt><dd className="text-right">{formatSaleDate(sale.sale_date)}</dd>
           <dt className="text-gray-500">Cashier</dt><dd className="text-right">{sale.cashier?.name || "—"}</dd>
-          <dt className="text-gray-500">Customer</dt><dd className="text-right">{sale.customer?.name || "Walk-in"}</dd>
+          <dt className="text-gray-500">Customer</dt>
+          <dd className="text-right">
+            <p>{sale.customer?.name || "Walk-in"}</p>
+            {sale.customer?.phone && (
+              <p className="mt-1 text-gray-500">{sale.customer.phone}</p>
+            )}
+            {sale.customer?.address && (
+              <p className="mt-1 whitespace-pre-line break-words text-gray-500">{sale.customer.address}</p>
+            )}
+          </dd>
         </dl>
 
         <div className="border-b border-dashed border-gray-300 py-3">

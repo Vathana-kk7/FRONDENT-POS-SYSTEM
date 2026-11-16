@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 
 import { useCustomer } from '../../../context/CustomerContext';
+import { getCustomerImageUrl } from '../utils/customerImage';
 
 const DEFAULT_VISIBLE_COLUMNS = {
   email: true,
@@ -255,11 +256,25 @@ function CustomerTable({
                   </td>
 
                   <td className="px-5 py-4">
-                    <div
-                      className="max-w-[220px] truncate font-semibold text-gray-900"
-                      title={customer?.name || ''}
-                    >
-                      {customer?.name || 'N/A'}
+                    <div className="flex items-center gap-3">
+                      {customer?.image ? (
+                        <img
+                          src={getCustomerImageUrl(customer.image)}
+                          alt=""
+                          className="h-9 w-9 shrink-0 rounded-full border border-gray-200 object-cover"
+                          onError={(event) => { event.currentTarget.src = '/Images/people.png'; }}
+                        />
+                      ) : (
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-800">
+                          {(customer?.name || '?').charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div
+                        className="max-w-[220px] truncate font-semibold text-gray-900"
+                        title={customer?.name || ''}
+                      >
+                        {customer?.name || 'N/A'}
+                      </div>
                     </div>
                   </td>
 

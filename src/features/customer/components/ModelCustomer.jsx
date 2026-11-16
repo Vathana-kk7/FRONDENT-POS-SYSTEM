@@ -1,6 +1,7 @@
 import { X, LoaderCircle } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import CustomerProfileImage from "./CustomerProfileImage";
 
 function ModelCustomer({
   onClose,
@@ -9,6 +10,7 @@ function ModelCustomer({
   selectedCategory = null,
 }) {
   const isSelecting = Boolean(selectedCategory);
+  const [profileImage, setProfileImage] = useState(null);
 
   const {
     register,
@@ -32,7 +34,7 @@ function ModelCustomer({
         throw new Error("Customer submit function is not provided.");
       }
 
-      await createCustomer(data);
+      await createCustomer({ ...data, image: profileImage });
       onClose(); // Close the modal after successful submission
       // Reset the form for Save & New.
       reset({
@@ -43,6 +45,7 @@ function ModelCustomer({
         address: "",
         status: "Active",
       });
+      setProfileImage(null);
 
       // Keep the modal open when creating a new customer.
       // Close it after a successful edit.
@@ -55,7 +58,7 @@ function ModelCustomer({
   };
 
   const isSubmitDisabled =
-    isPending || (isSelecting && !isDirty);
+    isPending || (isSelecting && !isDirty && !profileImage);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
@@ -91,6 +94,12 @@ function ModelCustomer({
 
           {/* Body Form */}
           <div className="space-y-4 py-5">
+            <CustomerProfileImage
+              image={selectedCategory?.image}
+              file={profileImage}
+              onChange={setProfileImage}
+              disabled={isPending}
+            />
             {/* Name & Phone */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
@@ -216,7 +225,7 @@ function ModelCustomer({
                     throw new Error("Customer submit function is not provided.");
                   }
 
-                  await createCustomer(data);
+                  await createCustomer({ ...data, image: profileImage });
 
                   reset({
                     name: "",
@@ -226,6 +235,7 @@ function ModelCustomer({
                     address: "",
                     status: "Active",
                   });
+                  setProfileImage(null);
                 } catch (error) {
                   console.error("Error creating customer:", error);
                 }
